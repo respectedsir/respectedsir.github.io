@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respected Sir</title>
+    <meta name="description" content="This post describes the steps I took while participating in the Perpetual Powers of Tau ceremony">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/prism-base16-monokai.dark.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css" integrity="sha384-qCEsSYDSH0x5I45nNW4oXemORUZnYFtPy/FqB/OjqxabTMW5HVaaH9USK4fN3goV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.js" integrity="sha384-YFVvRUwgqxkAVN9bmAVLsKilmOKfQLyUx0ZlmDNs0aBUTsvMLnRxE3Km0NrZa0i9" crossorigin="anonymous"></script>
+
+  </head>
+  <body>
+    <header>
+      <h1 class="home"><a href="/">Saravanan V</a></h1>
+      <ul class="nav">
+        <li class="nav-item"><a href="/about/">About</a></li>
+      </ul>
+    </header>
+
+    <main  class="tmpl-post">
+
+      <h1>My PPoT Participation Experience</h1>
+<time class="postlist-date" datetime="2020-09-06">06 Sep 2020</time>
+
+<p>In June, I listened to <a href="https://www.zeroknowledge.fm/133">Episode 133</a> of the Zero Knowledge podcast about trusted setup ceremonies. In that episode, <a href="https://twitter.com/weijie_eth">Wei Jie</a> mentioned that the <a href="https://github.com/weijiekoh/perpetualpowersoftau">Perpetual Powers of Tau</a> ceremony was still ongoing. They were still looking for participants.</p>
+<p>I decided to participate. Wei Jie mentions the following participation requirements in the podcast.</p>
+<ul>
+<li>About 150 GB of free hard disk space</li>
+<li>A computer to run a computation which could take upto a day</li>
+<li>Internet bandwidth to download a 97 GB challenge file and upload a 49 GB response file</li>
+</ul>
+<p>On June 22, I sent Wei Jie (<a href="https://twitter.com/weijie_eth">@weijie_eth</a>) a direct message on Twitter. He sent me a link to a Telegram channel. I joined the group and announced my intention to participate. The coordinator, Elizabeth, informed me that there were four participants in the queue ahead of me. She would let me know when it was my turn.</p>
+<p>In the <a href="https://github.com/weijiekoh/perpetualpowersoftau#instructions-for-each-participant">participant instructions</a>, I noticed that participants were expected to document their process and sign the document with a Keybase account or GPG key. I had a Keybase account but I could not find the private keys I had created before. I reset my Keybase account, which takes three days to come into effect.</p>
+<p>On July 8, Elizabeth informed me that it was my turn to participate if I was ready. In addition to reminding me that I would need 150 GB of disk space, she asked for my geographical location. I think the location information is used to put the 97 GB challenge file in a data center which is close to the participant.</p>
+<p>I live on an academic campus. Due to the pandemic, I was working from home on a laptop. I decided to run the PPoT computation on the desktop in my office, which is also located in the same campus. I had SSH access to my office desktop from home.</p>
+<p>On July 9, Elizabeth sent me a link to the challenge file. It took 3 hours to download it onto my desktop. I followed the <a href="https://github.com/weijiekoh/perpetualpowersoftau#instructions-for-each-participant">instructions</a> and was presented with a prompt like this.</p>
+<pre class="language-text"><code class="language-text">  Will contribute to accumulator for 2^28 powers of tau<br>  In total will generate up to 536870912 powers<br>  Type some random text and press [ENTER] to provide additional entropy...</code></pre>
+<p>I invited my kids to type the random text. They obliged with glee as I don't let them type on the keyboard while I am working. Their random keystrokes somehow turned on the Universal Access Zoom feature in my Ubuntu laptop (which had a tmux session into my desktop). At that time, I did not understand what had happened. So I aborted the computation and used my phone to figure out how to turn off the Zoom.</p>
+<p>When I started computation again, it once again prompted me to type some random text. I entered some text and hit ENTER. The program stopped immediately with the following message.</p>
+<pre class="language-text"><code class="language-text">  thread 'main' panicked at 'unable to create `./response` in this<br>  directory: Os { code: 17, kind: AlreadyExists, message: "File exists" }',<br>  src/bin/compute_constrained.rs:92:18</code></pre>
+<p>The solution was to delete the <code>response</code> file in the working directory and restart the computation. For the final random text, I asked my kids to type some text while staying away from the special keys.</p>
+<p>The computation took about 13 hours to complete. It generated the 49 GB response file. The BLAKE2b hash of this file was printed on the screen at the end of the computation. I copied the hash into a text file as I had seen the other participants post it in the Telegram channel. I posted on the Telegram channel that I was ready with the response. Elizabeth setup an FTP server for me to upload the response file. The upload took about an hour to complete.</p>
+<p>Elizabeth asked me to look at the attestation samples in the <a href="https://github.com/weijiekoh/perpetualpowersoftau">GitHub repository</a> and send her mine via Telegram. She would push it to the repository. I browsed a few attestations and picked the <a href="https://github.com/weijiekoh/perpetualpowersoftau/blob/master/0045_ben_response/attestation_0045_ben.md">one from Ben Edgington</a> as my template. My attestation can be found <a href="https://github.com/weijiekoh/perpetualpowersoftau/blob/master/0047_saravanan_response/saravanan_attestation_0047.md">here</a>. I signed my attestation using the following keybase command.</p>
+<pre class="language-text"><code class="language-text"> keybase sign -i saravanan_attestation_0047.md -o saravanan_attestation_0047.md.sig</code></pre>
+<p>I sent my attestation file and the signature file to Elizabeth. It was added to the GitHub repository a few days later. When I looked at the attestation file, I realized that I had made a mistake in the challenge URL. When I had used Ben Edginton's attestation as my template, I had modified only the suffix of the challenge URL, which had the attestation number. I had failed to notice that the URL prefix was location dependent (<code>ppotuk</code> vs <code>ppotin</code>).</p>
+<pre class="language-text"><code class="language-text"><del class="highlight-line highlight-line-remove">*Challenge*: URL: https://ppotuk.blob.core.windows.net/public/challenge\_0047</del><br><ins class="highlight-line highlight-line-add">*Challenge*: URL: https://ppotin.blob.core.windows.net/public/challenge_0047</ins></code></pre>
+<p>I made the change and signed the attestation file again using keybase. I sent the files to Elizabeth. She <a href="https://github.com/weijiekoh/perpetualpowersoftau/commit/1d3b13c95f8c9ced2f402465c0bdeac6d3c7cf7d">committed</a> them to the repository.</p>
+<p><em>Thanks to Elizabeth and Wei Jie for reading a draft of this post.</em></p>
+<hr>
+Last modified on Sept 06, 2020.
+
+    </main>
+
+    <footer></footer>
+
+    <!-- Current page: /blog/ppot-experience/ -->
+  </body>
+</html>
