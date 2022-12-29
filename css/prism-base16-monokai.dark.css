@@ -20,7 +20,6 @@ pre[class*="language-"] {
 	padding: 1.5em 0;
 	margin: .5em 0;
 	overflow: auto;
-	max-width: 800px;
 }
 :not(pre) > code[class*="language-"] {
 	padding: .1em;
@@ -69,7 +68,6 @@ pre[class*="language-"] {
 	text-decoration: line-through;
 }
 .token.inserted {
-	border-bottom: 1px dotted #f9f8f5;
 	text-decoration: none;
 }
 .token.italic {

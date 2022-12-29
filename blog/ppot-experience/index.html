@@ -3,17 +3,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Respected Sir</title>
+    <title>Saravanan Vijayakumaran</title>
     <meta name="description" content="This post describes the steps I took while participating in the Perpetual Powers of Tau ceremony">
     <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="/css/prism-base16-monokai.dark.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css" integrity="sha384-qCEsSYDSH0x5I45nNW4oXemORUZnYFtPy/FqB/OjqxabTMW5HVaaH9USK4fN3goV" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.js" integrity="sha384-YFVvRUwgqxkAVN9bmAVLsKilmOKfQLyUx0ZlmDNs0aBUTsvMLnRxE3Km0NrZa0i9" crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" href="/css/prism-diff.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+    <link rel="alternate" href="." type="application/atom+xml" title="Respected Sir">
+    <link rel="alternate" href="." type="application/json" title="Respected Sir">
   </head>
   <body>
+  <div class="content-centering">
     <header>
-      <h1 class="home"><a href="/">Saravanan V</a></h1>
+      <h1 class="home"><a href="/">Saravanan Vijayakumaran</a></h1>
       <ul class="nav">
         <li class="nav-item"><a href="/about/">About</a></li>
       </ul>
@@ -22,7 +25,8 @@
     <main  class="tmpl-post">
 
       <h1>My PPoT Participation Experience</h1>
-<time class="postlist-date" datetime="2020-09-06">06 Sep 2020</time>
+
+<time datetime="2020-09-06">06 Sep 2020</time>
 
 <p>In June, I listened to <a href="https://www.zeroknowledge.fm/133">Episode 133</a> of the Zero Knowledge podcast about trusted setup ceremonies. In that episode, <a href="https://twitter.com/weijie_eth">Wei Jie</a> mentioned that the <a href="https://github.com/weijiekoh/perpetualpowersoftau">Perpetual Powers of Tau</a> ceremony was still ongoing. They were still looking for participants.</p>
 <p>I decided to participate. Wei Jie mentions the following participation requirements in the podcast.</p>
@@ -44,17 +48,18 @@
 <p>The computation took about 13 hours to complete. It generated the 49 GB response file. The BLAKE2b hash of this file was printed on the screen at the end of the computation. I copied the hash into a text file as I had seen the other participants post it in the Telegram channel. I posted on the Telegram channel that I was ready with the response. Elizabeth setup an FTP server for me to upload the response file. The upload took about an hour to complete.</p>
 <p>Elizabeth asked me to look at the attestation samples in the <a href="https://github.com/weijiekoh/perpetualpowersoftau">GitHub repository</a> and send her mine via Telegram. She would push it to the repository. I browsed a few attestations and picked the <a href="https://github.com/weijiekoh/perpetualpowersoftau/blob/master/0045_ben_response/attestation_0045_ben.md">one from Ben Edgington</a> as my template. My attestation can be found <a href="https://github.com/weijiekoh/perpetualpowersoftau/blob/master/0047_saravanan_response/saravanan_attestation_0047.md">here</a>. I signed my attestation using the following keybase command.</p>
 <pre class="language-text"><code class="language-text"> keybase sign -i saravanan_attestation_0047.md -o saravanan_attestation_0047.md.sig</code></pre>
-<p>I sent my attestation file and the signature file to Elizabeth. It was added to the GitHub repository a few days later. When I looked at the attestation file, I realized that I had made a mistake in the challenge URL. When I had used Ben Edginton's attestation as my template, I had modified only the suffix of the challenge URL, which had the attestation number. I had failed to notice that the URL prefix was location dependent (<code>ppotuk</code> vs <code>ppotin</code>).</p>
-<pre class="language-text"><code class="language-text"><del class="highlight-line highlight-line-remove">*Challenge*: URL: https://ppotuk.blob.core.windows.net/public/challenge\_0047</del><br><ins class="highlight-line highlight-line-add">*Challenge*: URL: https://ppotin.blob.core.windows.net/public/challenge_0047</ins></code></pre>
+<p>I sent my attestation file and the signature file to Elizabeth. It was added to the GitHub repository a few days later. When I looked at the attestation file, I realized that I had made a mistake in the challenge URL. When I had used Ben Edgington's attestation as my template, I had modified only the suffix of the challenge URL, which had the attestation number. I had failed to notice that the URL prefix was location dependent (<code>ppotuk</code> vs <code>ppotin</code>).</p>
+<pre class="language-diff-text"><code class="language-diff-text"><span class="token deleted-sign deleted language-text"><span class="token prefix deleted">-</span>*Challenge*: URL: https://ppotuk.blob.core.windows.net/public/challenge\_0047<br></span><span class="token inserted-sign inserted language-text"><span class="token prefix inserted">+</span>*Challenge*: URL: https://ppotin.blob.core.windows.net/public/challenge_0047</code></pre>
 <p>I made the change and signed the attestation file again using keybase. I sent the files to Elizabeth. She <a href="https://github.com/weijiekoh/perpetualpowersoftau/commit/1d3b13c95f8c9ced2f402465c0bdeac6d3c7cf7d">committed</a> them to the repository.</p>
 <p><em>Thanks to Elizabeth and Wei Jie for reading a draft of this post.</em></p>
-<hr>
-Last modified on Sept 06, 2020.
 
+
+      
     </main>
 
     <footer></footer>
 
     <!-- Current page: /blog/ppot-experience/ -->
+  </div>
   </body>
 </html>

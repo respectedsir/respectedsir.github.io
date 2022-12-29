@@ -2,22 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.respectedsir.com/about/</loc>
-    <lastmod>2020-08-25</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://www.respectedsir.com/</loc>
-    <lastmod>2020-08-25</lastmod>
-  </url>
-  
-  <url>
     <loc>https://www.respectedsir.com/blog/ppot-experience/</loc>
     <lastmod>2020-09-06</lastmod>
   </url>
   
   <url>
+    <loc>https://www.respectedsir.com/about/</loc>
+    <lastmod>2022-12-27</lastmod>
+  </url>
+  
+  <url>
     <loc>https://www.respectedsir.com/blog/</loc>
-    <lastmod>2020-09-06</lastmod>
+    <lastmod>2022-12-27</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.respectedsir.com/</loc>
+    <lastmod>2022-12-27</lastmod>
   </url>
 </urlset>
