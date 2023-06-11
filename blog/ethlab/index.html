@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saravanan Vijayakumaran</title>
+    <meta name="description" content="This post describes the design and conduct of 3-hour lab course on Ethereum contract development">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/prism-base16-monokai.dark.css">
+    <link rel="stylesheet" href="/css/prism-diff.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css" integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js" integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+    <link rel="alternate" href="." type="application/atom+xml" title="Respected Sir">
+    <link rel="alternate" href="." type="application/json" title="Respected Sir">
+  </head>
+  <body>
+  <div class="content-centering">
+    <header>
+      <h1 class="home"><a href="/">Saravanan Vijayakumaran</a></h1>
+      <ul class="nav">
+        <li class="nav-item"><a href="/about/">About</a></li>
+      </ul>
+    </header>
+
+    <main  class="tmpl-post">
+
+      <h1>A 3-Hour Lab on Ethereum Contract Development</h1>
+
+<time datetime="2023-06-11">11 Jun 2023</time>
+
+<p><strong>tldr;</strong> <em>I prepared a 3-hour lab session on Ethereum smart contract development. You can view the lab content here: <a href="/ethlab/">www.respectedsir.com/ethlab</a></em></p>
+<h2 id="context" tabindex="-1">Context <a class="direct-link" href="#context" aria-hidden="true">#</a></h2>
+<p>I am associated with the recently established <a href="https://trustlab.iitb.ac.in/">Trust Lab</a> at IIT Bombay. In December 2022, the lab organized a <a href="https://trustlab.iitb.ac.in/event/winter-school-2022">Winter School on Digital Trust</a> in association with ACM India. I was tasked with delivering some lectures on cryptocurrencies and conducting a lab on smart contract development. This post is about the design and conduct of the lab. The lecture videos are available at the following links.</p>
+<ul>
+<li><a href="https://youtu.be/S1MwstWHpUI">Bitcoin: Part 1</a></li>
+<li><a href="https://youtu.be/nYwspKgNt04">Bitcoin: Part 2</a></li>
+<li><a href="https://youtu.be/TltkSn0_uUk">Bitcoin Transactions</a></li>
+<li><a href="https://youtu.be/zA-ZwneqyHo">Ethereum</a></li>
+<li><a href="https://youtu.be/0Orzg6yyU00">Rollups: Part 1</a></li>
+<li><a href="https://youtu.be/vwu3MGPKUCg">Rollups: Part 2</a></li>
+</ul>
+<h2 id="lab-content" tabindex="-1">Lab Content <a class="direct-link" href="#lab-content" aria-hidden="true">#</a></h2>
+<p>The lab slot was 3 hours long. Most of the winter school attendees were 3rd year CS undergraduates from all over India. No prior exposure to smart contract development was assumed of them.</p>
+<p>When designing the lab content, I made the following choices:</p>
+<ul>
+<li><strong>Ethereum</strong>: The lab exercises would involve only Ethereum.
+<ul>
+<li>This was a no-brainer as Ethereum is the most popular platform for smart contracts. Several other independent blockchains have chosen the Ethereum Virtual Machine (EVM) as their execution engine.</li>
+</ul>
+</li>
+<li><strong>Deployment on Testnet</strong>: All contract deployments would be on an Ethereum tesnet (Goerli).
+<ul>
+<li><strong>Con</strong>: Deploying to an Ethereum testnet would require each student to get testnet ETH from a faucet. This is an additional step that can be avoided in local deployments.</li>
+<li><strong>Pros</strong>: The workflow is closer to deployments to Ethereum mainnet.
+<ul>
+<li>The deployed contracts and subsequent interactions can be viewed on the <a href="https://goerli.etherscan.io/">Goerli Etherscan</a> blockchain explorer.</li>
+<li>NFTs minted on Goerli can be viewed on the testnet versions of NFT explorers like <a href="https://testnets.opensea.io/">OpenSea</a>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Two workflows</strong>: The lab would cover two different workflows  based on <a href="https://remix.ethereum.org/">Remix</a> and <a href="https://hardhat.org/">Hardhat</a> for smart contract development.
+<ul>
+<li>Remix is a browser-based IDE for Ethereum smart contract development. As it requires no software installation, the workflow is simpler. It would enable students to get to contract deployment faster.</li>
+<li>Hardhat is a command-line tool for Ethereum smart contract development. It requires an installation of NodeJS to work. It can be paired with an editor like <a href="https://code.visualstudio.com/">Visual Studio Code</a> for contract development.</li>
+<li>Hardhat appears to be more popular than Remix for building contract deployment scripts. For example, the Ethereum tutorials on <a href="https://docs.alchemy.com/docs">Alchemy's Web3 Tutorials site</a> all use Hardhat.</li>
+<li>If the Hardhat setup were to fail (and it did for some students using Windows), the Remix workflow could be used as a fallback option.</li>
+</ul>
+</li>
+<li><strong>Four contracts</strong>: The students would deploy four contracts in the ab. Three using Hardhat and one using Remix.
+<ul>
+<li>Two simple contracts, one each to illustrate the Remix and Hardhat workflows. Both involve storing and updating a variable in a smart contract.</li>
+<li><strong>An ERC-20 Token Contract</strong>: ERC-20 tokens are a killer app on Ethereum. By deploying an ERC-20 contract, students would create a new token on Ethereum. The token is effectively a cryptocurrency with automatic support in wallets like Metamask.</li>
+<li><strong>An ERC-721 NFT Contract</strong>: Non-fungible tokens attracted mainstream media attention in 2020-21. By deploying an NFT contract, students would learn about how they work.</li>
+</ul>
+</li>
+<li><strong>Use Alchemy Tutorials</strong>: All three of the contracts that were to be deployed using the Hardhat workflow were based on Alchemy's tutorials (with some minor modifications).
+<ul>
+<li><a href="https://www.alchemy.com/">Alchemy</a> is a provider of blockchain infrastructure-as-a-service. Its website hosts <a href="https://docs.alchemy.com/">several tutorials</a> on smart contract development on Ethereum and other blockchains. These tutorials are free and of high quality.</li>
+<li>The catch is that the tutorial content involves using the Alchemy RPC endpoints and API keys. This would require each student to create a free tier account. The account signup does not require a credit card.</li>
+<li>The upside of having an Alchemy account was that each student could get 0.2 Goerli testnet ether from <a href="https://goerlifaucet.com/">Alchemy's faucet</a> at the beginning of the lab session. This much ether would be sufficient to deploy all four contracts.</li>
+</ul>
+</li>
+<li><strong>mdbook-based Lab Manual</strong>: I created a lab manual using <a href="https://rust-lang.github.io/mdBook/index.html">mdbook</a>. It is available at <a href="/ethlab/">https://www.respectedsir.com/ethlab</a>.
+<ul>
+<li>An mdbook site works better than a pdf-based manual for navigation. Also, copy-and-paste of code snippets from pdf documents may not work well.</li>
+<li>The manual suggested a linear flow for the lab session starting from the prerequisites all the way to the NFT contract.</li>
+<li>The Alchemy tutorials for the different contracts are meant to be read independently and have some repetition. In the manual, I could remove these redundancies.</li>
+<li>Additional context and steps could be added at appropriate places. For example, I added the procedure to upload the NFT metadata to IPFS using <a href="https://www.pinata.cloud/">Pinata</a> and to view the deployed NFT on <a href="https://testnets.opensea.io/">Opensea testnet</a>.</li>
+</ul>
+</li>
+</ul>
+<h2 id="lab-execution" tabindex="-1">Lab Execution <a class="direct-link" href="#lab-execution" aria-hidden="true">#</a></h2>
+<p>The students were sent a link to the lab manual and asked to work through it on their laptops. After successfully completing a testnet contract deployment, they were asked to enter the Etherscan link to the contract into a Google form.</p>
+<p><img src="/img/ethlab-google-form.png" alt="Blockchain Lab Contract Submission Form"></p>
+<p>This form enabled real-time feedback on the progress of the students. It also illustrates the advantage of deploying the contracts on a public testnet. The instructor can check the contract deployments without looking into each student's laptop.</p>
+<h2 id="venue" tabindex="-1">Venue <a class="direct-link" href="#venue" aria-hidden="true">#</a></h2>
+<p>The venue was the new <a href="https://eeiitb.github.io/mbfclassrooms/cc/">Collaborative Classroom</a> in the EE department of IIT Bombay. It has hexagonal tables each seating upto six students. The layout allowed the TAs and me to walk around debugging the issues faced by the students.</p>
+<p><img src="/img/ethlab-session-800.jpg" alt="Blockchain Lab Session in Collaborative Classroom"></p>
+<h2 id="alchemy-faucet-issue" tabindex="-1">Alchemy Faucet Issue <a class="direct-link" href="#alchemy-faucet-issue" aria-hidden="true">#</a></h2>
+<p>One unexpected issue was that the <a href="https://goerlifaucet.com/">Alchemy faucet</a> failed to give some students Goerli ether even though they had created an Alchemy account. This was fixed by having these students access the faucet website using their mobile phone internet, and not through the IIT Bombay network.</p>
+<p>Maybe Alchemy had implemented IP address-based rate limiting. All the student requests could have appeared to be coming from the small set of IIT Bombay public IP addresses.</p>
+<h2 id="acknowledgment" tabindex="-1">Acknowledgment <a class="direct-link" href="#acknowledgment" aria-hidden="true">#</a></h2>
+<p>I want to thank the TAs — Varun Thakore, Mayank Taneja, Kaartik Bhushan, Darshit Gandhi — who helped conduct this lab session. The students enjoyed it (see smiles <a href="/img/ethlab-smiles.jpg">here</a>).</p>
+
+
+<hr align="left">
+<ul><li>Previous: <a href="/blog/ppot-experience/">My PPoT Participation Experience</a></li>
+</ul>
+
+      
+    </main>
+
+    <footer></footer>
+
+    <!-- Current page: /blog/ethlab/ -->
+  </div>
+  </body>
+</html>
