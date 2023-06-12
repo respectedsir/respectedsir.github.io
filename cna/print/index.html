@@ -1,0 +1,1779 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>CryptoNote Transaction Graph Analysis</title>
+        <meta name="robots" content="noindex" />
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="custom.css">
+
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><a href="requirements.html">Requirements</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">Monero Analysis</li><li class="chapter-item expanded "><a href="download-blockchain.html"><strong aria-hidden="true">1.</strong> Download the Monero Blockchain</a></li><li class="chapter-item expanded "><a href="postgresql.html"><strong aria-hidden="true">2.</strong> Create PostgreSQL Tables</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="pg-keyimage.html"><strong aria-hidden="true">2.1.</strong> Create Keyimage Table</a></li><li class="chapter-item expanded "><a href="pg-outputs.html"><strong aria-hidden="true">2.2.</strong> Create Outputs Table</a></li><li class="chapter-item expanded "><a href="pg-edges.html"><strong aria-hidden="true">2.3.</strong> Create Edges Table</a></li></ol></li><li class="chapter-item expanded "><a href="create-graph.html"><strong aria-hidden="true">3.</strong> Create the Transaction Graph</a></li><li class="chapter-item expanded "><a href="dm-decomposition.html"><strong aria-hidden="true">4.</strong> DM Decomposition Analysis</a></li><li class="chapter-item expanded "><a href="closed-set-attack.html"><strong aria-hidden="true">5.</strong> Closed Set Attack</a></li><li class="chapter-item expanded affix "><li class="part-title">Analysing Monero using Hard Forks</li><li class="chapter-item expanded "><a href="hardforks.html"><strong aria-hidden="true">6.</strong> What and Why of Hard Forks</a></li><li class="chapter-item expanded "><a href="create-fork-indices-column.html"><strong aria-hidden="true">7.</strong> Create Fork Indices Column</a></li><li class="chapter-item expanded "><a href="download-hardforks.html"><strong aria-hidden="true">8.</strong> Download Hard Fork Data</a></li><li class="chapter-item expanded "><a href="monero-original/index.html"><strong aria-hidden="true">9.</strong> Use Monero Original Data</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="monero-original/run-client.html"><strong aria-hidden="true">9.1.</strong> Run Monero Original Client</a></li><li class="chapter-item expanded "><a href="monero-original/postgresql.html"><strong aria-hidden="true">9.2.</strong> Create PostgreSQL Tables</a></li><li class="chapter-item expanded "><a href="monero-original/output-addresses.html"><strong aria-hidden="true">9.3.</strong> Find Output Addresses</a></li><li class="chapter-item expanded "><a href="monero-original/ring-intersections.html"><strong aria-hidden="true">9.4.</strong> Find Ring Intersections</a></li></ol></li><li class="chapter-item expanded "><a href="monerov/index.html"><strong aria-hidden="true">10.</strong> Use MoneroV Data</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="monerov/compile-client.html"><strong aria-hidden="true">10.1.</strong> Compile MoneroV Client</a></li><li class="chapter-item expanded "><a href="monerov/run-client.html"><strong aria-hidden="true">10.2.</strong> Run MoneroV Client</a></li><li class="chapter-item expanded "><a href="monerov/postgresql.html"><strong aria-hidden="true">10.3.</strong> Create PostgreSQL Tables</a></li><li class="chapter-item expanded "><a href="monerov/output-addresses.html"><strong aria-hidden="true">10.4.</strong> Find Output Addresses</a></li><li class="chapter-item expanded "><a href="monerov/ring-intersections.html"><strong aria-hidden="true">10.5.</strong> Find Ring Intersections</a></li></ol></li><li class="chapter-item expanded "><a href="monero-v7/index.html"><strong aria-hidden="true">11.</strong> Use Monero v7 Data</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="monero-v7/run-client.html"><strong aria-hidden="true">11.1.</strong> Run Monero v7 Client</a></li><li class="chapter-item expanded "><a href="monero-v7/postgresql.html"><strong aria-hidden="true">11.2.</strong> Create PostgreSQL Tables</a></li><li class="chapter-item expanded "><a href="monero-v7/output-addresses.html"><strong aria-hidden="true">11.3.</strong> Find Output Addresses</a></li><li class="chapter-item expanded "><a href="monero-v7/ring-intersections.html"><strong aria-hidden="true">11.4.</strong> Find Ring Intersections</a></li></ol></li><li class="chapter-item expanded "><a href="monero-v9/index.html"><strong aria-hidden="true">12.</strong> Use Monero v9 Data</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="monero-v9/run-client.html"><strong aria-hidden="true">12.1.</strong> Run Monero v9 Client</a></li><li class="chapter-item expanded "><a href="monero-v9/postgresql.html"><strong aria-hidden="true">12.2.</strong> Create PostgreSQL Tables</a></li><li class="chapter-item expanded "><a href="monero-v9/output-addresses.html"><strong aria-hidden="true">12.3.</strong> Find Output Addresses</a></li><li class="chapter-item expanded "><a href="monero-v9/ring-intersections.html"><strong aria-hidden="true">12.4.</strong> Find Ring Intersections</a></li></ol></li><li class="chapter-item expanded "><a href="update-fork-indices-column.html"><strong aria-hidden="true">13.</strong> Update Fork Indices Column</a></li><li class="chapter-item expanded "><a href="hardfork-ringct.html"><strong aria-hidden="true">14.</strong> RingCT Analysis</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="hardfork-ringct-edges.html"><strong aria-hidden="true">14.1.</strong> Create Edges Table</a></li><li class="chapter-item expanded "><a href="hardfork-ringct-create-graph.html"><strong aria-hidden="true">14.2.</strong> Create the Transaction Graph</a></li><li class="chapter-item expanded "><a href="hardfork-ringct-dm-decomposition.html"><strong aria-hidden="true">14.3.</strong> DM Decomposition Analysis</a></li><li class="chapter-item expanded "><a href="hardfork-ringct-closed-set-attack.html"><strong aria-hidden="true">14.4.</strong> Closed Set Attack</a></li></ol></li><li class="chapter-item expanded "><a href="hardfork-nonringct.html"><strong aria-hidden="true">15.</strong> Non-RingCT Analysis</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="hardfork-nonringct-edges.html"><strong aria-hidden="true">15.1.</strong> Create Edges Table</a></li><li class="chapter-item expanded "><a href="hardfork-nonringct-create-graph.html"><strong aria-hidden="true">15.2.</strong> Create the Transaction Graph</a></li><li class="chapter-item expanded "><a href="hardfork-nonringct-dm-decomposition.html"><strong aria-hidden="true">15.3.</strong> DM Decomposition Analysis</a></li><li class="chapter-item expanded "><a href="hardfork-nonringct-closed-set-attack.html"><strong aria-hidden="true">15.4.</strong> Closed Set Attack</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">CryptoNote Transaction Graph Analysis</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p>The following pages contain instructions to perform the analysis described in the paper <a href="https://eprint.iacr.org/2021/760">Analysis of CryptoNote Transaction Graphs using the Dulmage-Mendelsohn Decomposition</a>.</p>
+<p>These instructions are maintained by <a href="https://www.ee.iitb.ac.in/~sarva/">Saravanan Vijayakumaran</a>. They have been tested only on  Ubuntu 22.04. If you find a bug in these instructions, please file an <a href="https://github.com/avras/cryptonote-analysis/issues/">issue</a>.</p>
+<p>The code required to perform the analysis is available <a href="https://github.com/avras/cryptonote-analysis">here</a>. The scripts (Python, Bash, SQL, C++) and programs used are organized as follows.</p>
+<pre><code class="language-bash">cryptonote-analysis
+├── Cargo.lock
+├── Cargo.toml
+├── scripts
+│   ├── hardforks
+│   │   ├── find_ring_intersection_from_forks.py
+│   │   ├── monero-original
+│   │   │   ├── create_keyimages_table.sql
+│   │   │   ├── create_outputs_table.sql
+│   │   │   ├── find_xmr_xmo_addresses.py
+│   │   │   ├── populate_xmo_tables.py
+│   │   │   ├── sql_table_creation.sh
+│   │   │   └── trim_ring_xmr_xmo.py
+│   │   ├── monerov
+│   │   │   ├── create_keyimages_table.sql
+│   │   │   ├── create_outputs_table.sql
+│   │   │   ├── Dockerfile
+│   │   │   ├── find_xmr_xmv_addresses.py
+│   │   │   ├── populate_xmv_tables.py
+│   │   │   ├── sql_table_creation.sh
+│   │   │   └── trim_ring_xmr_xmv.py
+│   │   ├── monero-v7
+│   │   │   ├── create_keyimages_table.sql
+│   │   │   ├── create_outputs_table.sql
+│   │   │   ├── find_xmr_xmrv7_addresses.py
+│   │   │   ├── populate_xmrv7_tables.py
+│   │   │   ├── sql_table_creation.sh
+│   │   │   └── trim_ring_xmr_xmrv7.py
+│   │   └── monero-v9
+│   │       ├── create_keyimages_table.sql
+│   │       ├── create_outputs_table.sql
+│   │       ├── find_xmr_xmrv9_addresses.py
+│   │       ├── populate_xmrv9_tables.py
+│   │       ├── sql_table_creation.sh
+│   │       └── trim_ring_xmr_xmrv9.py
+│   └── monero
+│       ├── create_csparse_edges.cpp
+│       ├── create_keyimages_table.sql
+│       ├── create_outputs_table.sql
+│       ├── keyimage_table_creation.sh
+│       ├── output_table_creation.sh
+│       └── populate_keyimage_table.py
+└── src
+    ├── bin
+    │   ├── cascade.rs
+    │   ├── cluster.rs
+    │   ├── dmdec.rs
+    │   ├── stats_cla.rs
+    │   └── stats_dm.rs
+    └── lib.rs
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="requirements"><a class="header" href="#requirements">Requirements</a></h1>
+<h2 id="hardware-requirements"><a class="header" href="#hardware-requirements">Hardware Requirements</a></h2>
+<p>A computer with at least 24 GB of RAM and a 1 TB SSD.</p>
+<p>Some comments about the disk space and RAM required.</p>
+<ul>
+<li>The Monero blockchain upto height 2530000 occupies about 150 GB.</li>
+<li>The hard fork databases occupy about 229 GB. If you are not planning on performing the analysis using hard fork data, you can discount this space.</li>
+<li>The PostgreSQL tables take up about 60 GB.</li>
+<li>The following two steps require more than 8 GB of RAM.
+<ul>
+<li>Compiling the MoneroV client using docker (needs 16 GB)</li>
+<li>Running the Rust program that performs DM decomposition analysis (needs 24 GB).</li>
+</ul>
+</li>
+</ul>
+<h2 id="software-requirements"><a class="header" href="#software-requirements">Software Requirements</a></h2>
+<p>On a machine with Ubuntu Linux 22.04, install the following software.</p>
+<ol>
+<li><a href="https://www.rust-lang.org/tools/install">Rust</a></li>
+<li><a href="https://www.python.org/downloads/">Python 3</a></li>
+<li><code>pip</code>
+<pre><code>sudo apt install python3-pip
+</code></pre>
+</li>
+<li><a href="https://pypi.org/project/requests/">requests</a>
+<pre><code>pip install requests
+</code></pre>
+</li>
+<li><a href="https://www.postgresql.org/download/linux/ubuntu/">PostgreSQL</a>
+<pre><code>sudo apt install postgresql libpq-dev
+</code></pre>
+</li>
+<li><a href="https://pypi.org/project/psycopg2/">Psycopg</a>
+<pre><code>pip install psycopg2
+</code></pre>
+</li>
+<li><a href="https://numpy.org/">numpy</a>
+<pre><code>pip install numpy
+</code></pre>
+</li>
+<li><a href="https://www.docker.com/">Docker</a>
+<ul>
+<li>Only required for analysing Monero using hardfork data.</li>
+<li>These instructions have been tried after installing <a href="https://docs.docker.com/desktop/install/linux-install/">Docker Desktop</a>.</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="download-the-monero-blockchain"><a class="header" href="#download-the-monero-blockchain">Download the Monero Blockchain</a></h1>
+<p>We need to download all the blocks of the CryptoNote blockchain to perform our analysis. This involves downloading the client software and running it.</p>
+<p>For Monero, download the latest release of the client from the releases page: <a href="https://github.com/monero-project/monero/releases/">https://github.com/monero-project/monero/releases/</a>.</p>
+<p>Unzip the archive and run the Monero CLI using the following command in the unzipped directory.</p>
+<pre><code>./monerod
+</code></pre>
+<p>It can take more than a day to sync the entire Monero blockchain onto an SSD. Using an HDD can take even longer.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-postgresql-tables"><a class="header" href="#create-postgresql-tables">Create PostgreSQL Tables</a></h1>
+<p>We will be using PostgreSQL tables to store the transaction graph. We will need three tables that are named as follows.</p>
+<ul>
+<li><code>xmr_keyimages</code>: Contains transaction rings and key images</li>
+<li><code>xmr_outputs</code>: Contains the transaction outputs</li>
+<li><code>xmr_bigraph_edges</code>: Contains the edges of the bipartite transaction graph</li>
+</ul>
+<p>Do the following before proceeding to the table creation steps.</p>
+<ol>
+<li>Install <a href="https://www.postgresql.org/download/linux/ubuntu/">PostgreSQL</a> if you have not already done so.</li>
+<li>Set the password for the <code>postgres</code> user via the following commands.
+<ul>
+<li><code>sudo su postgres</code></li>
+<li><code>psql</code></li>
+<li><code>\password postgres</code></li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-keyimage-table"><a class="header" href="#create-keyimage-table">Create Keyimage Table</a></h1>
+<ol>
+<li>
+<p>Install <a href="https://www.postgresql.org/download/linux/ubuntu/">PostgreSQL</a> if you have not already done so.</p>
+</li>
+<li>
+<p>Set the password for the <code>postgres</code> user via the following commands.</p>
+<ul>
+<li><code>sudo su postgres</code></li>
+<li><code>psql</code></li>
+<li><code>\password postgres</code></li>
+</ul>
+</li>
+<li>
+<p>There is a file called <code>create_keyimages_table.sql</code> in the <code>scripts/monero</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmr_keyimages
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    distinct_ring_indices   INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: Some old transaction rings in Monero have repeated ring members. The <code>distinct_ring_indices</code> only stores the distinct ring member indices.</p>
+</blockquote>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/monero</code> directory to create the <code>xmr_keyimages</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_keyimages_table.sql
+</code></pre>
+<blockquote>
+<p><strong>NOTE</strong>: Alternatively, you can create the <code>xmr_keyimages</code> table by running the script called <code>keyimage_table_creation.sh</code> in the <code>scripts/monero</code> directory. You can run the command <code>source keyimage_table_creation.sh</code> and enter the Postgres user password when prompted.</p>
+</blockquote>
+</li>
+<li>
+<p>You can check that the table was successfully created by running the <code>\dt</code> command in the <code>psql</code> shell.</p>
+<ul>
+<li>Run the following commands to enter the <code>psql</code> shell.
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Run the <code>\dt</code> command in the shell. The output should look like the following.
+<pre><code>postgres=# \dt
+            List of relations
+ Schema |     Name      | Type  |  Owner   
+--------+---------------+-------+----------
+ public | xmr_keyimages | table | postgres
+(1 row)
+
+</code></pre>
+</li>
+<li>The <code>xmr_keyimages</code> table will be initially empty.
+<pre><code>postgres=# SELECT * FROM xmr_keyimages;
+ image | id | ring_amount | ring_indices | distinct_ring_indices | block_height 
+-------+----+-------------+--------------+-----------------------+--------------
+(0 rows)
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>Run the Monero CLI client in offline mode using the following command. In this mode, the client will not download new blocks.</p>
+<pre><code>./monerod --offline
+</code></pre>
+</li>
+<li>
+<p>Run the <code>populate_keyimage_table.py</code> script that is located in the <code>scripts/monero</code> directory.</p>
+<pre><code>python3 populate_keyimage_table.py
+</code></pre>
+<p>This script will query the Monero client and populate the <code>xmr_keyimages</code> table with non-coinbase transactions from block height 0 to block height <a href="https://localmonero.co/blocks/block/2530000">2,530,000</a>. The latter block was mined on January 4, 2022. This script can take more than a day to finish running.</p>
+<blockquote>
+<p><strong>WARNING</strong>: Before running this script, don't forget to change the <code>postgres</code> user password in the script to the password you have set. It needs to be changed in the argument to <code>psycopg2.connect()</code>.</p>
+</blockquote>
+</li>
+<li>
+<p>Once the <code>populate_keyimage_table.py</code> script finishes running, you can stop the <code>monerod</code> client by pressing Ctrl-D in the CLI window.</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-outputs-table"><a class="header" href="#create-outputs-table">Create Outputs Table</a></h1>
+<ol>
+<li>There is a file called <code>create_outputs_table.sql</code> in the <code>scripts/monero</code> directory with the following contents.
+<pre><code class="language-sql">CREATE TABLE xmr_outputs
+(
+    address       VARCHAR(64),
+    id            SERIAL PRIMARY KEY,
+    amount        BIGINT,
+    index         INTEGER,
+    UNIQUE(amount, index)
+)
+</code></pre>
+</li>
+<li>Run the following command in the <code>scripts/monero</code> directory to create the <code>xmr_outputs</code> table.
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_outputs_table.sql
+</code></pre>
+<blockquote>
+<p><strong>NOTE</strong>: Alternatively, you can create the <code>xmr_outputs</code> table by running the script called <code>output_table_creation.sh</code> in the <code>scripts/monero</code> directory. You can run the command <code>source output_table_creation.sh</code> and enter the Postgres user password when prompted.</p>
+</blockquote>
+</li>
+<li>Populate the <code>xmr_outputs</code> table using the following steps.
+<ul>
+<li>Run the following commands to enter the <code>psql</code> shell.
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Run <strong>ONLY ONE</strong> of the following queries. These queries consider transactions upto block height 1541236. This block height was used by Yu et al in their <a href="https://fc19.ifca.ai/preproceedings/69-preproceedings.pdf">FC 2019 paper</a>.
+<ul>
+<li>Run the following query to consider <strong>all outputs</strong> (RingCT and pre-RingCT).
+<pre><code class="language-sql">INSERT INTO xmr_outputs(amount, index) SELECT ring_amount, UNNEST(ring_indices) FROM xmr_keyimages WHERE block_height &lt;= 1541236 ON CONFLICT(amount, index) DO NOTHING;
+</code></pre>
+</li>
+<li>To consider only RingCT outputs, run the following query. The difference from the previous query is the <code>AND ring_amount=0</code> clause.
+<pre><code class="language-sql">INSERT INTO xmr_outputs(amount, index) SELECT ring_amount, UNNEST(ring_indices) FROM xmr_keyimages WHERE block_height &lt;= 1541236 AND ring_amount=0 ON CONFLICT(amount, index) DO NOTHING;
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>NOTE</strong>: The point of creating the <code>xmr_outputs</code> table is to generate a unique integer index for every output. Then any edge in the CryptoNote transaction graph can be represented as a pair of integers: the keyimage index and the output index.</p>
+</blockquote>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-edges-table"><a class="header" href="#create-edges-table">Create Edges Table</a></h1>
+<ol>
+<li>Run the following commands to enter the <code>psql</code> shell (if you are not already inside it).
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Create the <code>xmr_bigraph_edges</code> table by running <strong>ONLY ONE</strong> of the following queries. These queries consider transactions upto block height 1541236.
+<ul>
+<li>Run the following query to consider <strong>all outputs</strong> (RingCT and pre-RingCT).
+<pre><code class="language-sql">CREATE TABLE xmr_bigraph_edges AS SELECT xk.id as keyimage_id, xo.id as output_id, xo.amount as output_amount, xo.index as output_index FROM (SELECT id, ring_amount, UNNEST(ring_indices) AS index FROM xmr_keyimages WHERE block_height &lt;= 1541236) AS xk INNER JOIN xmr_outputs xo ON xk.ring_amount = xo.amount AND xk.index = xo.index;
+</code></pre>
+</li>
+<li>To consider only RingCT outputs, run the following query. The difference from the previous query is the <code>ring_amount = 0</code> clause.
+<pre><code class="language-sql">CREATE TABLE xmr_bigraph_edges AS SELECT xk.id as keyimage_id, xo.id as output_id, xo.amount as output_amount, xo.index as output_index FROM (SELECT id, ring_amount, UNNEST(ring_indices) AS index FROM xmr_keyimages WHERE ring_amount = 0 AND block_height &lt;= 1541236) AS xk INNER JOIN xmr_outputs xo ON xk.ring_amount = xo.amount AND xk.index = xo.index;
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-the-transaction-graph"><a class="header" href="#create-the-transaction-graph">Create the Transaction Graph</a></h1>
+<ol>
+<li>Create the edges file using the following steps
+<ul>
+<li>Run the following commands to enter the <code>psql</code> shell.
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Run the following query to write the edges file to disk.
+<pre><code class="language-sql">\COPY (SELECT keyimage_id, output_id FROM xmr_bigraph_edges) TO '/tmp/edges-1541236.txt' WITH DELIMITER ' ';
+</code></pre>
+</li>
+</ul>
+</li>
+<li>Each row in the <code>edges-1541236.txt</code> file represents an edge. The <code>keyimage_id</code> and <code>output_id</code> values that represent the edge are index values from the respective PostgreSQL tables. These index values do not form a contiguous range and can have gaps. But the sparse graph representations we will use work better without gaps in the index ranges.
+<ul>
+<li>Copy the <code>edges-1541236.txt</code> file to the <code>scripts/monero</code> directory.</li>
+<li>Compile the <code>create_csparse_edges.cpp</code> file located in the <code>scripts/monero</code> directory. Run it with the block height as argument.
+<pre><code>cd scripts/monero
+g++ -O2 create_csparse_edges.cpp 
+./a.out 1541236
+</code></pre>
+The output should look like the following.
+<pre><code>Reading edge file
+Finished reading edge file
+Number of key images: 23164745
+Number of outputs: 25126033
+Number of vertices: 48290778
+Number of edges: 58791856
+Creating keyimage index map
+Finished creating keyimage index map
+Creating output index map
+Finished creating output index map
+Adding edges to graph
+Finished adding edges to graph
+</code></pre>
+</li>
+<li>Three output files are created.
+<ul>
+<li>
+<p><code>csparse-edges-1541236.txt</code></p>
+<p>The edges in this file are represented as pairs of indices starting from 0 followed by a 1. This is the CSparse format for representing sparse matrices. The 1 corresponds to the value of the matrix entry. In our case, we use this format to represent sparse bipartite graphs.</p>
+</li>
+<li>
+<p><code>index-keyimageid-map-1541236.txt</code></p>
+<p>This file has pairs of indices and keyimage IDs per line. It is to translate the result of the transaction graph analysis back to the keyimage ID space.</p>
+</li>
+<li>
+<p><code>index-outputid-map-1541236.txt</code></p>
+<p>This file has pairs of indices and output IDs per line. It is to translate the result of the transaction graph analysis back to the output ID space.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="dm-decomposition-analysis"><a class="header" href="#dm-decomposition-analysis">DM Decomposition Analysis</a></h1>
+<ol>
+<li>
+<p>Compile the Rust binaries by running <code>cargo build --release</code>.</p>
+</li>
+<li>
+<p>Run the Dulmage-Mendelsohn decomposition program as follows.</p>
+<pre><code>cargo run --release --bin dmdec csparse-edges-1541236.txt rings-before-dm-1541236.txt rings-after-dm-1541236.txt blocksizes-1541236.txt fine-decomp-1541236.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>dmdec</code> can be understood by running <code>cargo run -r --bin dmdec -- --help</code> or <code> ./target/release/dmdec --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 6.920599929s
+Num keyimages = 23164745, Num public keys = 25126033
+Matched 23164745 out of 25126033 rows (public keys)
+Number of unreachable pubkeys and keyimages = 16343677 16343677
+Number of blocks in fine decomposition: 16338353
+Singletons (traceable keyimages): 16335308
+Closed set size histogram: {1: 16335308, 2: 2281, 3: 596, 4: 46, 5: 23, 6: 8, 7: 14, 8: 11, 9: 8, 10: 4, 11: 5, 12: 4, 13: 5, 14: 4, 15: 6, 16: 4, 17: 5, 18: 4, 20: 3, 21: 2, 22: 1, 24: 1, 26: 1, 27: 1, 40: 1, 43: 1, 50: 1, 55: 1, 103: 1, 106: 1, 119: 1, 122: 1}
+</code></pre>
+<p>The above output says that out of the 23164745 transaction rings in the data set, 16335308 are traceable, i.e. the true output being spent in these transactions can be identified. Furthermore, there are 2281 closed sets of size 2, 596 closed sets of size 3, and so on. For a definition of a closed set, see <a href="https://fc19.ifca.ai/preproceedings/69-preproceedings.pdf">Yu et al (FC 2019)</a>.</p>
+</li>
+<li>
+<p>To calculate statistics related to the DM decomposition analysis, run the following command.</p>
+<pre><code>cargo run --release --bin stats_dm scripts/csparse-edges-1541236.txt rings-before-dm-1541236.txt rings-after-dm-1541236.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>stats_dm</code> can be understood by running <code>cargo run -r --bin stats_dm -- --help</code> or <code> ./target/release/stats_dm --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 6.77205837s
+Num keyimages = 23164745, Num public keys = 25126033
+Pre DM decomposition rings file read in 9.421371749s
+Pre DM decomposition mixin histogram:
+[12209675, 707786, 4496490, 1486593, 3242625, 319352, 432875, 21528, 30067, 17724, 200030]
+Post DM decomposition rings file read in 6.898382785s
+Post DM decomposition mixin histogram:
+[16335308, 1413028, 2369796, 279377, 2369578, 186257, 73690, 13086, 23615, 13071, 87939]
+DM decomposition traceable ring mixin histogram:
+[12209675, 625641, 1779446, 952862, 451981, 74186, 202360, 4296, 3506, 2178, 29177]
+</code></pre>
+<p>The above output can be interpreted as follows.</p>
+<ul>
+<li>Out of the 16335308 traceable rings, 12209675 had zero mixins (there were already traceable) before the DM decomposition, 625641 had one mixin before the DM decomposition, 1779446 had two mixins, and so on.</li>
+<li>The number of mixins in a transaction ring can be quite large. For example, <a href="https://localmonero.co/blocks/tx/5e75b4596c234ad17d34c44c3f07da508afb985748b3066bbfe2923cedb0b81a">this transaction</a> from block 1296030 has 4500 mixins. In the above histograms, we combine all mixin counts of 10 or more. So 200030 corresponds to the number of transaction rings with 10 or more mixins before the DM decomposition, 87939 is the same number after the DM decomposition, and 29177 is the number of traceable rings which had 10 or more mixins before the DM decomposition.</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="closed-set-attack"><a class="header" href="#closed-set-attack">Closed Set Attack</a></h1>
+<ol>
+<li>
+<p>Compile the Rust binaries by running <code>cargo build --release</code> (if not already done).</p>
+</li>
+<li>
+<p>Perform the cascade attack first by running the following command.</p>
+<pre><code>cargo run --release --bin cascade csparse-edges-1541236.txt rings-after-cascade-1541236.txt 10
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>cascade</code> can be understood by running <code>cargo run -r --bin cascade -- --help</code> or <code> ./target/release/cascade --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 6.780508534s
+Num keyimages = 23164745, Num public keys = 25126033
+Zero-mixin rings before CA = 12209675
+Zero-mixin rings after CA iteration 1 = 15985204. Time taken = 4.434802555s.
+Zero-mixin rings after CA iteration 2 = 16285257. Time taken = 277.680441ms.
+Zero-mixin rings after CA iteration 3 = 16322672. Time taken = 111.501964ms.
+Zero-mixin rings after CA iteration 4 = 16328236. Time taken = 87.87365ms.
+Zero-mixin rings after CA iteration 5 = 16329045. Time taken = 83.504531ms.
+Zero-mixin rings after CA iteration 6 = 16329176. Time taken = 83.173992ms.
+Zero-mixin rings after CA iteration 7 = 16329215. Time taken = 82.656612ms.
+Zero-mixin rings after CA iteration 8 = 16329215. Time taken = 82.576734ms.
+No change in number of traceable rings. Exiting cascade attack loop
+</code></pre>
+<p>The above output shows that 16329215 rings were traced by the cascade attack after 7 iterations. As there was no change in the number of traceable rings in the 8th iteration, the program exited.</p>
+</li>
+<li>
+<p>Run the clustering algorithm attack by running the following command.</p>
+<pre><code>cargo run --release --bin cluster rings-after-cascade-1541236.txt rings-after-cluster-1541236.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>cluster</code> can be understood by running <code>cargo run -r --bin cluster -- --help</code> or <code> ./target/release/cluster --help</code>.</p>
+</blockquote>
+<p>The output should look like the following. The key index values may be different.</p>
+<pre><code>Rings file read in 6.888624255s
+Ring sets created in 2.083401154s
+Counted initial number of traceable rings in 87.942429ms
+Number of traceable rings = 16329215
+At beginning of clustering algorithm while loop
+1: Cluster of size 491 found at key index 21441. Search iteration = 1
+Number of blocks in fine decomposition: 485
+Singletons (traceable keyimages): 484
+2: Cluster of size 593 found at key index 21450. Search iteration = 1
+Number of blocks in fine decomposition: 580
+Singletons (traceable keyimages): 579
+3: Cluster of size 555 found at key index 23092. Search iteration = 1
+Number of blocks in fine decomposition: 538
+Singletons (traceable keyimages): 537
+4: Cluster of size 346 found at key index 33335. Search iteration = 1
+Number of blocks in fine decomposition: 340
+.
+.
+.
+3009: Cluster of size 2 found at key index 22416538. Search iteration = 2
+Number of blocks in fine decomposition: 1
+Singletons (traceable keyimages): 0
+3010: Cluster of size 2 found at key index 22868731. Search iteration = 2
+Number of blocks in fine decomposition: 1
+Singletons (traceable keyimages): 0
+3011: Cluster of size 15 found at key index 22868933. Search iteration = 2
+Number of blocks in fine decomposition: 1
+Singletons (traceable keyimages): 0
+3012: Cluster of size 8 found at key index 22868960. Search iteration = 2
+Number of blocks in fine decomposition: 1
+Singletons (traceable keyimages): 0
+Number of traceable rings = 16334967
+Number of closed sets = 8765
+Number of singleton closed sets = 5752
+Number of non-singleton closed sets = 3013
+Closed set size histogram: {2: 2278, 3: 596, 4: 44, 5: 23, 6: 8, 7: 14, 8: 11, 9: 7, 10: 4, 11: 4, 12: 4, 13: 3, 14: 2, 15: 2, 16: 2, 17: 3, 18: 2, 20: 1, 21: 1, 43: 1, 50: 1, 55: 1}
+Number of public keys in all sets = 13230
+Number of public keys in non-singleton closed sets = 7478
+Pre attack mixin histogram:
+[16329215, 1416089, 2372296, 279613, 2369745, 186294, 73721, 13095, 23646, 13068, 87963]
+Post attack mixin histogram:
+[16334967, 1413031, 2370099, 279384, 2369606, 186257, 73690, 13086, 23615, 13071, 87939]
+</code></pre>
+<p>The above output can be interpreted as follows.</p>
+<ul>
+<li>The clustering algorithm renders 5752 transaction rings traceable. The number of traceable rings increases from 16329215 (after the cascade attack) to 16334967. In comparison, the DM decomposition had rendered 16335308 rings traceable, i.e. 341 rings more than the clustering algorithm.</li>
+<li>There are 2278 closed sets of size 2, 596 closed sets of size 3, and so on. Note that the maximum size of a closed set found by the clustering algorithm is 55. In contrast, the largest closed set found by the DM decomposition is 122.</li>
+</ul>
+</li>
+<li>
+<p>To calculate statistics related to the clustering algorithm, run the following command.</p>
+<pre><code>cargo run --release --bin stats_cla csparse-edges-1541236.txt rings-after-cascade-1541236.txt rings-after-cluster-1541236.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>stats_cla</code> can be understood by running <code>cargo run -r --bin stats_cla -- --help</code> or <code> ./target/release/stats_cla --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 6.987560875s
+Num keyimages = 23164745, Num public keys = 25126033
+Initial mixin histogram:
+[12209675, 707786, 4496490, 1486593, 3242625, 319352, 432875, 21528, 30067, 17724, 200030]
+Post cascade attack rings file read in 6.91789017s
+Post cascade attack mixin histogram:
+[16329215, 1416089, 2372296, 279613, 2369745, 186294, 73721, 13095, 23646, 13068, 87963]
+Cascade traceable ring pre-attack mixin histogram:
+[12209675, 625264, 1776192, 951984, 451230, 73980, 202100, 4282, 3490, 2162, 28856]
+Pre-attack mixin histogram of rings traced by cascade attack
+0 12209675
+1 625264
+2 1776192
+3 951984
+4 451230
+5 73980
+6 202100
+7 4282
+8 3490
+9 2162
+10 28856
+Total number of rings traced by cascade attack = 16329215
+Post clustering algorithm rings file read in 6.917414066s
+Post clustering algorithm mixin histogram:
+[16334967, 1413031, 2370099, 279384, 2369606, 186257, 73690, 13086, 23615, 13071, 87939]
+Cluster traceable ring post-attack mixin histogram:
+[12209675, 625641, 1779134, 952855, 451959, 74186, 202360, 4296, 3506, 2178, 29177]
+Post-attack mixin histogram of rings traced by clustering algorithm
+0 0
+1 377
+2 2942
+3 871
+4 729
+5 206
+6 260
+7 14
+8 16
+9 16
+10 321
+Total number of rings traced by clustering algorithm = 5752
+</code></pre>
+<p>The above output can be interpreted as follows.</p>
+<ul>
+<li>Out of the 16329215 rings traced by the cascade attack, 12209675 had zero mixins (there were already traceable) before the attack, 625264 had one mixin before the attack, 1776192 had two mixins, and so on.</li>
+<li>Out of the 5752 rings traced by the clustering algorithm, 377 had one mixin after the cascade attack and before the clustering algorithm was executed, 2942 had two mixins, and so on.</li>
+<li>In the above histograms, we combine all mixin counts of 10 or more.
+<ul>
+<li>So 200030 corresponds to the number of transaction rings with 10 or more mixins before the cascade attack, 87963 is the same number after the cascade attack, and 87939 is the number of rings which had 10 or more mixins after the clustering algorithm was executed.</li>
+<li>Similarly, 28856 is the number of rings traced by the cascade attack that had 10 or more mixins before the attack. And 321 is the number of rings traced by the clustering algorithm that had 10 or more mixins before the algorithm was executed.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="what-and-why-of-hard-forks"><a class="header" href="#what-and-why-of-hard-forks">What and Why of Hard Forks</a></h1>
+<p>Hard forks of the Monero chain are blockchains which have diverged from the main Monero chain at some block height. This divergence could be accidental due to some nodes not upgrading their client software in time. Or it could be intentional due to some developers forking the Monero client and introducing changes that are incompatible with the main Monero chain.</p>
+<p>Data from four hard forks is available: <strong>Monero Original</strong>, <strong>MoneroV</strong>, <strong>Monero v7</strong>, and <strong>Monero v9</strong>. The first two were intentional hard forks and the last two are accidental ones. The table below shows the number of blocks in each of these forks. The accidental forks lasted only for a few blocks.</p>
+<div class="table-wrapper"><table><thead><tr><th>Fork Name</th><th>Fork block</th><th style="text-align: right">Blocks in fork</th><th style="text-align: right">Common keyimages</th></tr></thead><tbody>
+<tr><td>Monero Original</td><td>1,546,000</td><td style="text-align: right">238,682</td><td style="text-align: right">87,546</td></tr>
+<tr><td>MoneroV</td><td>1,564,966</td><td style="text-align: right">146,325</td><td style="text-align: right">10,152</td></tr>
+<tr><td>Monero v7</td><td>1,685,555</td><td style="text-align: right">29</td><td style="text-align: right">1,066</td></tr>
+<tr><td>Monero v9</td><td>1,788,000</td><td style="text-align: right">73</td><td style="text-align: right">1,581</td></tr>
+</tbody></table>
+</div>
+<p>The same output can be spent in both the main Monero chain and a hard fork without violating the no double spending restriction. Whenever an output is spent, its keyimage is revealed. If the same keyimage appears in a Monero transaction and a hard fork transaction, the output being spent must be in the intersection of both transaction rings. If the transaction rings have an intersection size of one, the output being spent is identified.</p>
+<p>This type of cross-chain analysis for Monero was first performed by <a href="https://arxiv.org/abs/1812.02808">Hinteregger et al. (2018).</a> The instructions in the following chapters describe steps to perform their analysis followed by a final DM decomposition analysis. Hinteregger et al. had considered data from Monero Original and MoneroV. We add the two smaller hard forks which appeared after their work was published.</p>
+<p>The last column in the above table shows the number of keyimages from each hard fork that also appeared on the main Monero chain. If any of the outputs corresponding to these keyimages can be identified, they can be marked as mixins in all the other transactions they appear in. And the corresponding edges in these other transactions can be deleted before performing the DM decomposition analysis.</p>
+<h2 id="why-not-use-monero-blockchain-mark-spent-outputs"><a class="header" href="#why-not-use-monero-blockchain-mark-spent-outputs">Why not use <code>monero-blockchain-mark-spent-outputs</code>?</a></h2>
+<p>Every Monero release contains a command-line tool called <code>monero-blockchain-mark-spent-outputs</code> which can be used to identify spent outputs. This tool takes a list of LMDB databases as input (see <a href="./download-hardforks.html">Download Hard Fork Data</a>) and outputs a list of spent outputs. It implements the cascade attack, finds transactions which cause the zero-mixin effect as characterized by <a href="https://eprint.iacr.org/2018/348">Wijaya et al.</a>, attempts to identify closed sets, and performs the cross-chain analysis proposed by <a href="https://arxiv.org/abs/1812.02808">Hinteregger et al.</a> It is informally called the &quot;blackball tool&quot; in the Monero community.</p>
+<p>This tool's goal is to help Monero users avoid spent outputs while choosing mixins for their transactions. Technically, we could have also used it to identify spent outputs. But we chose to identify the spent outputs <em>without using this tool</em> for the following two reasons.</p>
+<ol>
+<li>The tool fails to read the transactions in the MoneroV LMDB database. It outputs the error message <code>Failed to parse transaction from blob</code>.</li>
+<li>When the hard fork databases are given as input, it gives some errors with the message <code>Rings for the same key image are disjoint</code>.</li>
+</ol>
+<p>The errors in point 2 can be explained as below.</p>
+<ul>
+<li>Within a single Monero chain, an output is uniquely determined by the <code>(amount, index)</code> pair.
+<ul>
+<li>The <code>amount</code> corresponds to the number of coins associated with the output (zero for RingCT outputs).</li>
+<li>The <code>index</code> is an incrementing counter which specifies the rank of the output in the list of all outputs corresponding to a particular <code>amount</code> (when the list is sorted by order of appearance on the blockchain). </li>
+</ul>
+</li>
+<li>An <code>(amount, index)</code> pair may be associated with different one-time addresses (public keys) on different Monero chains.</li>
+<li>The <code>monero-blockchain-mark-spent-outputs</code> does not translate the <code>(amount, index)</code> pairs to one-time addresses (this was true at least until <a href="https://github.com/monero-project/monero/releases/tag/v0.18.2.2">version v0.18.2.2</a>, April 2023). So when a keyimage appears on two Monero chains, the corresponding transaction rings may have disjoint output indices.</li>
+</ul>
+<p>To avoid such errors, our analysis uses RPC queries to the respective Monero clients to translate <code>(amount, index)</code> pairs to one-time addresses on each Monero chain before computing intersections.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-fork-indices-column"><a class="header" href="#create-fork-indices-column">Create Fork Indices Column</a></h1>
+<p>We will add a column named <code>fork_indices</code> to the <code>xmr_keyimages</code> table. Here is some motivation.</p>
+<ul>
+<li>It will initially contain the distinct output indices corresponding to the transaction ring members.</li>
+<li>For keyimages which have appeared in both the main Monero chain and at least one hard fork, we may be able to remove some of the output indices in the <code>fork_indices</code>.</li>
+<li>Our analysis using hard fork data will translate <code>(amount, index)</code> pairs to one-time addresses on each chain and then find the intersection of the transaction rings corresponding to a keyimage from all five chains — Monero and the four hard forks.</li>
+<li>The <code>fork_indices</code> column will store the intersection of the transaction rings using indices from the main Monero chain.</li>
+</ul>
+<p>Do the following to add the <code>fork_indices</code> column.</p>
+<ol>
+<li>Run the following commands to enter the <code>psql</code> shell.
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Add the <code>fork_indices</code> column to the <code>xmr_keyimages</code> table.
+<pre><code class="language-sql">ALTER TABLE xmr_keyimages ADD fork_indices INTEGER[];
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: We could have added the <code>fork_indices</code> column when creating the <code>xmr_keyimages</code> table in the <a href="./pg-keyimage.html">Create Keyimage Table</a> step. We chose not to do so because this column is required only for the analysis using hard fork data.</p>
+</blockquote>
+</li>
+<li>Populate the <code>fork_indices</code> column with the contents of <code>dist_ring_indices</code>.
+<pre><code class="language-sql">UPDATE xmr_keyimages SET fork_indices=distinct_ring_indices;
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="download-hard-fork-data"><a class="header" href="#download-hard-fork-data">Download Hard Fork Data</a></h1>
+<blockquote>
+<p><strong>Acknowledgement</strong>: As the hard fork blockchains are no longer operational, we used the blockchain databases made available by <a href="https://twitter.com/JEhrenhofer">Justin Ehrenhofer</a> at <a href="https://github.com/monero-blackball/monero-blackball-site">https://github.com/monero-blackball/monero-blackball-site</a>. We thank him for making these databases freely available.</p>
+</blockquote>
+<ol>
+<li>In the README of the <a href="https://github.com/monero-blackball/monero-blackball-site">monero-blackball-site repo</a>, go to the section named &quot;Full Blockchain LMDB Downloads&quot;.</li>
+<li>Download the files corresponding to <code>monerov</code>, <code>monerov6</code>, <code>monerov7</code>, and <code>monerov9</code>. They are hosted on Google Drive.</li>
+<li>From each of the links, you will get two files called <code>data.mdb</code> and <code>lock.mdb</code>.</li>
+<li>Create a directory for each of the hardforks with names <code>monerov</code>, <code>monerov6</code>, <code>monerov7</code>, and <code>monerov9</code>.</li>
+<li>Create a subdirectory called <code>lmdb</code> in each of the four directories.</li>
+<li>Copy the downloaded <code>data.mdb</code> file corresponding to each hard fork to the respective <code>lmdb</code> directories. Your directory structure should like the following where <code>hardfork-lmdb-databases</code> is the parent directory.</li>
+</ol>
+<pre><code>        hardfork-lmdb-databases/
+        ├── monerov
+        │   └── lmdb
+        │       └── data.mdb
+        ├── monerov6
+        │   └── lmdb
+        │       └── data.mdb
+        ├── monerov7
+        │   └── lmdb
+        │       └── data.mdb
+        └── monerov9
+            └── lmdb
+                └── data.mdb
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="use-monero-original-data"><a class="header" href="#use-monero-original-data">Use Monero Original Data</a></h1>
+<p><a href="https://github.com/XmanXU/monero-original">Monero Original</a> is a hard fork of Monero which devitated from the main chain at block height <a href="https://localmonero.co/blocks/block/1546000">1,546,000</a> (April 6, 2018) and lasted for 238,682 blocks.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="run-monero-original-client"><a class="header" href="#run-monero-original-client">Run Monero Original Client</a></h1>
+<ol>
+<li>Download the <a href="https://github.com/XmanXU/monero-original/releases/tag/v0.11.3.0">Helium Hydra Original R3 release</a> of the Monero Original client.</li>
+<li>Run the following command to connect the <code>monerod</code> daemon to the LMDB database of the Monero Original blockchain. You may have to replace <code>hardfork-lmdb-databases</code> with the path on your machine.
+<pre><code>./monerod --data-dir hardfork-lmdb-databases/monerov6/ --offline
+</code></pre>
+</li>
+<li>The RPC server is exposed on port 18081. You can check if it is working by running the following command.
+<pre><code class="language-bash">curl http://127.0.0.1:18081/getheight
+</code></pre>
+You should see the following output. It shows that there are 1784682 blocks in the chain.
+<pre><code class="language-json">{
+   &quot;height&quot;: 1784682,
+   &quot;status&quot;: &quot;OK&quot;
+}
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-postgresql-tables-1"><a class="header" href="#create-postgresql-tables-1">Create PostgreSQL Tables</a></h1>
+<p>We will be using PostgreSQL tables to store the Monero Original data. We will need three tables that are named as follows.</p>
+<ul>
+<li><code>xmo_keyimages</code>: Contains transaction rings and key images</li>
+<li><code>xmo_outputs</code>: Contains the transaction outputs</li>
+<li><code>xmr_xmo_keyimages</code>: Contains the rows of <code>xmr_keyimages</code> whose keyimages appear in <code>xmo_keyimages</code></li>
+</ul>
+<ol>
+<li>
+<p>There is a file called <code>create_keyimages_table.sql</code> in the <code>scripts/hardforks/monero-original</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmo_keyimages
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/hardforks/monero-original</code> directory to create the <code>xmo_keyimages</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_keyimages_table.sql
+</code></pre>
+</li>
+<li>
+<p>There is a file called <code>create_outputs_table.sql</code> in the <code>scripts/hardforks/monero-original</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmo_outputs
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/hardforks/monero-original</code> directory to create the <code>xmo_outputs</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_outputs_table.sql
+</code></pre>
+<blockquote>
+<p><strong>NOTE</strong>: Alternatively, you can create the <code>xmo_keyimages</code> and <code>xmo_outputs</code> tables by running the script called <code>sql_table_creation.sh</code> in the <code>scripts/hardforks/monero-original</code> directory. You can run the command <code>source sql_table_creation.sh</code> and enter the Postgres user password when prompted.</p>
+</blockquote>
+</li>
+<li>
+<p>Run the <code>populate_xmo_tables.py</code> script that is located in the <code>scripts/hardforks/monero-original</code> directory.</p>
+<pre><code>python3 populate_xmo_tables.py
+</code></pre>
+<p>This script will query the Monero Original client and populate the <code>xmo_keyimages</code> and <code>xmo_outputs</code> tables with non-coinbase transactions from block height 1,546,000 to block height 1,784,681. The Monero Original blockchain diverged from the main Monero chain at block height 1,546,000.</p>
+</li>
+<li>
+<p>Once the <code>populate_xmo_tables.py</code> script finishes running, you can stop the Monero Original client by pressing Ctrl-D in the CLI window.</p>
+</li>
+<li>
+<p>Create the <code>xmr_xmo_keyimages</code> table using the following steps. It will contain the subset of <code>xmr_keyimages</code> that corresponds to keyimages which have appeared both on the main Monero chain and the Monero Original chain.</p>
+<ul>
+<li>Run the following commands to enter the <code>psql</code> shell.
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Run the following query.
+<pre><code class="language-sql">CREATE TABLE xmr_xmo_keyimages AS (SELECT xmrk.* FROM xmr_keyimages xmrk INNER JOIN xmo_keyimages xmok ON xmrk.image=xmok.image);
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="find-output-addresses"><a class="header" href="#find-output-addresses">Find Output Addresses</a></h1>
+<ol>
+<li>Run the Monero CLI client in offline mode using the following command.
+<pre><code>./monerod --offline
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> This is the Monero client and not the Monero Original client.</p>
+</blockquote>
+</li>
+<li>Run the <code>find_xmr_xmo_addresses.py</code> script that is located in the <code>scripts/hardforks/monero-original</code> directory.
+<pre><code>python3 find_xmr_xmo_addresses.py
+</code></pre>
+This script will query the Monero client and find the one-time addresses (public keys) corresponding to the outputs which appear in the transaction rings of <code>xmr_xmo_keyimages</code>. It will write a Python dictionary mapping <code>(ring_amount, index)</code> pairs to the one-time addresses into a file called <code>xmr_xmo_addr.dat</code>.</li>
+<li>Once the <code>find_xmr_xmo_addresses.py</code> script finishes running, you can stop the <code>monerod</code> client by pressing Ctrl-D in the CLI window.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="find-ring-intersections"><a class="header" href="#find-ring-intersections">Find Ring Intersections</a></h1>
+<ol>
+<li>
+<p>Run the <code>trim_ring_xmr_xmo.py</code> script that is located in the <code>scripts/hardforks/monero-original</code> directory.</p>
+<pre><code>python3 trim_ring_xmr_xmo.py
+</code></pre>
+<p>This script will replace the <code>fork_indices</code> column in <code>xmr_xmo_keyimages</code> with the intersection of the transaction rings.</p>
+<blockquote>
+<p><strong>Note</strong>: This script reads the Python dictionary mapping <code>(ring_amount, index)</code> pairs to the one-time addresses from the file called <code>xmr_xmo_addr.dat</code>. Ensure that this file is in the same directory as the script.</p>
+</blockquote>
+</li>
+<li>
+<p>You can query the number of transaction rings where the actual output being spent has been identified by running the following query in the <code>psql</code> shell.</p>
+<pre><code class="language-sql">SELECT COUNT(*) FROM xmr_xmo_keyimages WHERE ARRAY_LENGTH(fork_indices,1) = 1 AND ARRAY_LENGTH(distinct_ring_indices, 1) &lt;&gt; 1 AND block_height &lt;= 2530000;
+</code></pre>
+<p>The result of this query was 77121. Note that the query restricts the block height to 2530000.</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="use-monerov-data"><a class="header" href="#use-monerov-data">Use MoneroV Data</a></h1>
+<p><a href="https://github.com/monerov/monerov">MoneroV</a> is a hard fork of Monero which devitated from the main chain at block height <a href="https://localmonero.co/blocks/block/1565244">1,565,244</a> (May 4, 2018) and lasted for 146,047 blocks.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="compile-monerov-client"><a class="header" href="#compile-monerov-client">Compile MoneroV Client</a></h1>
+<ol>
+<li>Ensure that you have <code>docker</code> installed.</li>
+<li>Clone the <a href="https://github.com/monerov/monerov">MoneroV</a> repo (including submodules via the <code>--recursive</code> flag).
+<pre><code>git clone --recursive https://github.com/monerov/monerov.git
+</code></pre>
+</li>
+<li>Overwrite the <code>Dockerfile</code> in the <code>monerov</code> repo with the one the <code>scripts/hardforks/monerov</code> directory.
+<pre><code class="language-bash">cd monerov
+cp &lt;path-to-the-instructions-repo&gt;/scripts/hardforks/xmv/Dockerfile .
+</code></pre>
+</li>
+<li>In the <code>monerov</code> repo, run the following command to build a docker image containing the <code>monerovd</code> client binary.
+<pre><code class="language-dockerfile">docker build -t monerov .
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: You may have to increase the RAM allotted to the VM that docker uses to build the image. An allocation of 7.5 GB was sufficient for the image to be succesfully built. This can be done in the <code>Settings &gt; Advanced</code> menu of Docker Desktop.</p>
+</blockquote>
+</li>
+<li>The <code>monerovd</code> client binary is in the <code>/src/build/release/bin/</code> directory of the image. To copy it to the host machine, we need a running container based on this image.
+<pre><code class="language-bash">docker run -d monerov bash -c &quot;tail -f /dev/null&quot;
+</code></pre>
+The <code>tail -f /dev/null</code> command prevents the container from exiting. Make a note of the container id that is printed or obtain it by running the <code>docker ps</code> command.</li>
+<li>Copy the <code>monerovd</code> binary from the container to the host using the following command (after replacing <code>&lt;container-id&gt;</code> with the actual container ID).
+<pre><code class="language-bash">docker cp &lt;container-id&gt;:/src/build/release/bin/monerovd .
+</code></pre>
+The current directory of the host must have the <code>monerovd</code> binary.</li>
+<li>Stop and delete the container with the following command.
+<pre><code class="language-bash">docker rm -f &lt;container-id&gt;
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="run-monerov-client"><a class="header" href="#run-monerov-client">Run MoneroV Client</a></h1>
+<ol>
+<li>Run the following command to connect the <code>monerovd</code> daemon to the LMDB database of the MoneroV blockchain. You may have to replace <code>hardfork-lmdb-databases</code> with the path on your machine.
+<pre><code>./monerovd --data-dir hardfork-lmdb-databases/monerov/ --offline
+</code></pre>
+</li>
+<li>The RPC server is exposed on port 19091. You can check if it is working by running the following command.
+<pre><code class="language-bash">curl http://127.0.0.1:19091/get_height
+</code></pre>
+You should see the following output. It shows that there are 1711291 blocks in the chain.
+<pre><code class="language-json">{
+   &quot;height&quot;: 1711291,
+   &quot;status&quot;: &quot;OK&quot;,
+   &quot;untrusted&quot;: false
+}
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-postgresql-tables-2"><a class="header" href="#create-postgresql-tables-2">Create PostgreSQL Tables</a></h1>
+<p>We will be using PostgreSQL tables to store the MoneroV data. We will need three tables that are named as follows.</p>
+<ul>
+<li><code>xmv_keyimages</code>: Contains transaction rings and key images</li>
+<li><code>xmv_outputs</code>: Contains the transaction outputs</li>
+<li><code>xmr_xmv_keyimages</code>: Contains the rows of <code>xmr_keyimages</code> whose keyimages appear in <code>xmv_keyimages</code></li>
+</ul>
+<ol>
+<li>
+<p>There is a file called <code>create_keyimages_table.sql</code> in the <code>scripts/hardforks/monerov</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmv_keyimages
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/hardforks/monerov</code> directory to create the <code>xmv_keyimages</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_keyimages_table.sql
+</code></pre>
+</li>
+<li>
+<p>There is a file called <code>create_outputs_table.sql</code> in the <code>scripts/hardforks/monerov</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmv_outputs
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/hardforks/monerov</code> directory to create the <code>xmv_outputs</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_outputs_table.sql
+</code></pre>
+<blockquote>
+<p><strong>NOTE</strong>: Alternatively, you can create the <code>xmv_keyimages</code> and <code>xmv_outputs</code> tables by running the script called <code>sql_table_creation.sh</code> in the <code>scripts/hardforks/monerov</code> directory. You can run the command <code>source sql_table_creation.sh</code> and enter the Postgres user password when prompted.</p>
+</blockquote>
+</li>
+<li>
+<p>Run the <code>populate_xmv_tables.py</code> script that is located in the <code>scripts/hardforks/monerov</code> directory.</p>
+<pre><code>python3 populate_xmv_tables.py
+</code></pre>
+<p>This script will query the MoneroV client and populate the <code>xmv_keyimages</code> and <code>xmv_outputs</code> tables with non-coinbase transactions from block height 1,564,966 to block height 1,711,290. The MoneroV blockchain diverged from the main Monero chain at block height 1,564,966.</p>
+</li>
+<li>
+<p>Once the <code>populate_xmv_tables.py</code> script finishes running, you can stop the MoneroV client by pressing Ctrl-D in the CLI window.</p>
+</li>
+<li>
+<p>Create the <code>xmr_xmv_keyimages</code> table using the following steps. It will contain the subset of <code>xmr_keyimages</code> that corresponds to keyimages which have appeared both on the main Monero chain and the MoneroV chain.</p>
+<ul>
+<li>Run the following commands to enter the <code>psql</code> shell.
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Run the following query.
+<pre><code class="language-sql">CREATE TABLE xmr_xmv_keyimages AS (SELECT xmrk.* FROM xmr_keyimages xmrk INNER JOIN xmv_keyimages xmvk ON xmrk.image=xmvk.image);
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="find-output-addresses-1"><a class="header" href="#find-output-addresses-1">Find Output Addresses</a></h1>
+<ol>
+<li>Run the Monero CLI client in offline mode using the following command.
+<pre><code>./monerod --offline
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> This is the Monero client and not the MoneroV client.</p>
+</blockquote>
+</li>
+<li>Run the <code>find_xmr_xmv_addresses.py</code> script that is located in the <code>scripts/hardforks/monerov</code> directory.
+<pre><code>python3 find_xmr_xmv_addresses.py
+</code></pre>
+This script will query the Monero client and find the one-time addresses (public keys) corresponding to the outputs which appear in the transaction rings of <code>xmr_xmv_keyimages</code>. It will write a Python dictionary mapping <code>(ring_amount, index)</code> pairs to the one-time addresses into a file called <code>xmr_xmv_addr.dat</code>.</li>
+<li>Once the <code>find_xmr_xmv_addresses.py</code> script finishes running, you can stop the <code>monerod</code> client by pressing Ctrl-D in the CLI window.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="find-ring-intersections-1"><a class="header" href="#find-ring-intersections-1">Find Ring Intersections</a></h1>
+<ol>
+<li>
+<p>Run the <code>trim_ring_xmr_xmv.py</code> script that is located in the <code>scripts/hardforks/monerov</code> directory.</p>
+<pre><code>python3 trim_ring_xmr_xmv.py
+</code></pre>
+<p>This script will replace the <code>fork_indices</code> column in <code>xmr_xmv_keyimages</code> with the intersection of the transaction rings.</p>
+<blockquote>
+<p><strong>Note</strong>: This script reads the Python dictionary mapping <code>(ring_amount, index)</code> pairs to the one-time addresses from the file called <code>xmr_xmv_addr.dat</code>. Ensure that this file is in the same directory as the script.</p>
+</blockquote>
+</li>
+<li>
+<p>You can query the number of transaction rings where the actual output being spent has been identified by running the following query in the <code>psql</code> shell.</p>
+<pre><code class="language-sql">SELECT COUNT(*) FROM xmr_xmv_keyimages WHERE ARRAY_LENGTH(fork_indices,1) = 1 AND ARRAY_LENGTH(distinct_ring_indices, 1) &lt;&gt; 1;
+</code></pre>
+<p>The result of this query was 7287. Note that the query restricts the block height to 2530000.</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="use-monero-v7-data"><a class="header" href="#use-monero-v7-data">Use Monero v7 Data</a></h1>
+<p>Monero v7 is a hard fork of Monero which devitated from the main chain at block height <a href="https://localmonero.co/blocks/block/1685555">1,685,555</a> (October 18, 2018) and lasted for 29 blocks.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="run-monero-v7-client"><a class="header" href="#run-monero-v7-client">Run Monero v7 Client</a></h1>
+<ol>
+<li>Download the <a href="https://github.com/monero-project/monero/releases/tag/v0.12.3.0">Lithium Luna, Point Release 3</a> version of the Monero client.</li>
+<li>Run the following command to connect the <code>monerod</code> daemon to the LMDB database of the Monero v7 blockchain. You may have to replace <code>hardfork-lmdb-databases</code> with the path on your machine.
+<pre><code>./monerod --data-dir hardfork-lmdb-databases/monerov7/ --offline
+</code></pre>
+</li>
+<li>The RPC server is exposed on port 18081. You can check if it is working by running the following command.
+<pre><code class="language-bash">curl http://127.0.0.1:18081/get_height
+</code></pre>
+You should see the following output. It shows that there are 1685584 blocks in the chain.
+<pre><code class="language-json">{
+     &quot;height&quot;: 1685584,
+     &quot;status&quot;: &quot;OK&quot;,
+     &quot;untrusted&quot;: false
+}
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-postgresql-tables-3"><a class="header" href="#create-postgresql-tables-3">Create PostgreSQL Tables</a></h1>
+<p>We will be using PostgreSQL tables to store the Monero v7 data. We will need three tables that are named as follows.</p>
+<ul>
+<li><code>xmrv7_keyimages</code>: Contains transaction rings and key images</li>
+<li><code>xmrv7_outputs</code>: Contains the transaction outputs</li>
+<li><code>xmr_xmrv7_keyimages</code>: Contains the rows of <code>xmr_keyimages</code> whose keyimages appear in <code>xmrv7_keyimages</code></li>
+</ul>
+<ol>
+<li>
+<p>There is a file called <code>create_keyimages_table.sql</code> in the <code>scripts/hardforks/monero-v7</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmrv7_keyimages
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/hardforks/monero-v7</code> directory to create the <code>xmrv7_keyimages</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_keyimages_table.sql
+</code></pre>
+</li>
+<li>
+<p>There is a file called <code>create_outputs_table.sql</code> in the <code>scripts/hardforks/monero-v7</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmrv7_outputs
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/hardforks/monero-v7</code> directory to create the <code>xmrv7_outputs</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_outputs_table.sql
+</code></pre>
+<blockquote>
+<p><strong>NOTE</strong>: Alternatively, you can create the <code>xmrv7_keyimages</code> and <code>xmrv7_outputs</code> tables by running the script called <code>sql_table_creation.sh</code> in the <code>scripts/hardforks/monero-v7</code> directory. You can run the command <code>source sql_table_creation.sh</code> and enter the Postgres user password when prompted.</p>
+</blockquote>
+</li>
+<li>
+<p>Run the <code>populate_xmrv7_tables.py</code> script that is located in the <code>scripts/hardforks/monero-v7</code> directory.</p>
+<pre><code>python3 populate_xmrv7_tables.py
+</code></pre>
+<p>This script will query the Monero v7 client and populate the <code>xmrv7_keyimages</code> and <code>xmrv7_outputs</code> tables with non-coinbase transactions from block height 1,685,555 to block height 1,685,583. The Monero v7 blockchain diverged from the main Monero chain at block height 1,685,555.</p>
+</li>
+<li>
+<p>Once the <code>populate_xmrv7_tables.py</code> script finishes running, you can stop the Monero v7 client by pressing Ctrl-D in the CLI window.</p>
+</li>
+<li>
+<p>Create the <code>xmr_xmrv7_keyimages</code> table using the following steps. It will contain the subset of <code>xmr_keyimages</code> that corresponds to keyimages which have appeared both on the main Monero chain and the Monero v7 chain.</p>
+<ul>
+<li>Run the following commands to enter the <code>psql</code> shell.
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Run the following query.
+<pre><code class="language-sql">CREATE TABLE xmr_xmrv7_keyimages AS (SELECT xmrk.* FROM xmr_keyimages xmrk INNER JOIN xmrv7_keyimages xmrv7k ON xmrk.image=xmrv7k.image);
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="find-output-addresses-2"><a class="header" href="#find-output-addresses-2">Find Output Addresses</a></h1>
+<ol>
+<li>Run the Monero CLI client in offline mode using the following command.
+<pre><code>./monerod --offline
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> This is the Monero client and not the Monero v7 client.</p>
+</blockquote>
+</li>
+<li>Run the <code>find_xmr_xmrv7_addresses.py</code> script that is located in the <code>scripts/hardforks/monero-v7</code> directory.
+<pre><code>python3 find_xmr_xmrv7_addresses.py
+</code></pre>
+This script will query the Monero client and find the one-time addresses (public keys) corresponding to the outputs which appear in the transaction rings of <code>xmr_xmrv7_keyimages</code>. It will write a Python dictionary mapping <code>(ring_amount, index)</code> pairs to the one-time addresses into a file called <code>xmr_xmrv7_addr.dat</code>.</li>
+<li>Once the <code>find_xmr_xmrv7_addresses.py</code> script finishes running, you can stop the <code>monerod</code> client by pressing Ctrl-D in the CLI window.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="find-ring-intersections-2"><a class="header" href="#find-ring-intersections-2">Find Ring Intersections</a></h1>
+<ol>
+<li>
+<p>Run the <code>trim_ring_xmr_xmrv7.py</code> script that is located in the <code>scripts/hardforks/monero-v7</code> directory.</p>
+<pre><code>python3 trim_ring_xmr_xmrv7.py
+</code></pre>
+<p>This script will replace the <code>fork_indices</code> column in <code>xmr_xmrv7_keyimages</code> with the intersection of the transaction rings.</p>
+<blockquote>
+<p><strong>Note</strong>: This script reads the Python dictionary mapping <code>(ring_amount, index)</code> pairs to the one-time addresses from the file called <code>xmr_xmrv7_addr.dat</code>. Ensure that this file is in the same directory as the script.</p>
+</blockquote>
+</li>
+<li>
+<p>You can query the number of transaction rings where the actual output being spent has been identified by running the following query in the <code>psql</code> shell.</p>
+<pre><code class="language-sql">SELECT COUNT(*) FROM xmr_xmrv7_keyimages WHERE ARRAY_LENGTH(fork_indices,1) = 1 AND ARRAY_LENGTH(distinct_ring_indices, 1) &lt;&gt; 1 AND block_height &lt;= 2530000;
+</code></pre>
+<p>The result of this query was 650. Note that the query restricts the block height to 2530000.</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="use-monero-v9-data"><a class="header" href="#use-monero-v9-data">Use Monero v9 Data</a></h1>
+<p>Monero v9 is a hard fork of Monero which devitated from the main chain at block height <a href="https://localmonero.co/blocks/block/1788000">1,788,000</a> (March 9, 2019) and lasted for 73 blocks.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="run-monero-v9-client"><a class="header" href="#run-monero-v9-client">Run Monero v9 Client</a></h1>
+<ol>
+<li>Download the <a href="https://github.com/monero-project/monero/releases/tag/v0.13.0.4">Beryllium Bullet, Point Release</a> version of the Monero client.</li>
+<li>Run the following command to connect the <code>monerod</code> daemon to the LMDB database of the Monero v9 blockchain. You may have to replace <code>hardfork-lmdb-databases</code> with the path on your machine.
+<pre><code>./monerod --data-dir hardfork-lmdb-databases/monerov9/ --offline
+</code></pre>
+</li>
+<li>The RPC server is exposed on port 18081. You can check if it is working by running the following command.
+<pre><code class="language-bash">curl http://127.0.0.1:18081/get_height
+</code></pre>
+You should see the following output. It shows that there are 1788073 blocks in the chain.
+<pre><code class="language-json">{
+   &quot;height&quot;: 1788073,
+   &quot;status&quot;: &quot;OK&quot;,
+   &quot;untrusted&quot;: false
+}
+</code></pre>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-postgresql-tables-4"><a class="header" href="#create-postgresql-tables-4">Create PostgreSQL Tables</a></h1>
+<p>We will be using PostgreSQL tables to store the Monero v9 data. We will need three tables that are named as follows.</p>
+<ul>
+<li><code>xmrv9_keyimages</code>: Contains transaction rings and key images</li>
+<li><code>xmrv9_outputs</code>: Contains the transaction outputs</li>
+<li><code>xmr_xmrv9_keyimages</code>: Contains the rows of <code>xmr_keyimages</code> whose keyimages appear in <code>xmrv9_keyimages</code></li>
+</ul>
+<ol>
+<li>
+<p>There is a file called <code>create_keyimages_table.sql</code> in the <code>scripts/hardforks/monero-v9</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmrv9_keyimages
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/hardforks/monero-v9</code> directory to create the <code>xmrv9_keyimages</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_keyimages_table.sql
+</code></pre>
+</li>
+<li>
+<p>There is a file called <code>create_outputs_table.sql</code> in the <code>scripts/hardforks/monero-v9</code> directory with the following contents.</p>
+<pre><code class="language-sql">CREATE TABLE xmrv9_outputs
+(
+    image                   VARCHAR(64) NOT NULL,
+    id                      SERIAL PRIMARY KEY,
+    ring_amount             BIGINT,
+    ring_indices            INTEGER[],
+    block_height            INTEGER,
+    UNIQUE(image)
+)
+</code></pre>
+</li>
+<li>
+<p>Run the following command in the <code>scripts/hardforks/monero-v9</code> directory to create the <code>xmrv9_outputs</code> table.</p>
+<pre><code class="language-bash">psql -U postgres -h 127.0.0.1 -W -f create_outputs_table.sql
+</code></pre>
+<blockquote>
+<p><strong>NOTE</strong>: Alternatively, you can create the <code>xmrv9_keyimages</code> and <code>xmrv9_outputs</code> tables by running the script called <code>sql_table_creation.sh</code> in the <code>scripts/hardforks/monero-v9</code> directory. You can run the command <code>source sql_table_creation.sh</code> and enter the Postgres user password when prompted.</p>
+</blockquote>
+</li>
+<li>
+<p>Run the <code>populate_xmrv9_tables.py</code> script that is located in the <code>scripts/hardforks/monero-v9</code> directory.</p>
+<pre><code>python3 populate_xmrv9_tables.py
+</code></pre>
+<p>This script will query the Monero v9 client and populate the <code>xmrv9_keyimages</code> and <code>xmrv9_outputs</code> tables with non-coinbase transactions from block height 1,788,000 to block height 1,788,072. The Monero v9 blockchain diverged from the main Monero chain at block height 1,788,000.</p>
+</li>
+<li>
+<p>Once the <code>populate_xmrv9_tables.py</code> script finishes running, you can stop the Monero v9 client by pressing Ctrl-D in the CLI window.</p>
+</li>
+<li>
+<p>Create the <code>xmr_xmrv9_keyimages</code> table using the following steps. It will contain the subset of <code>xmr_keyimages</code> that corresponds to keyimages which have appeared both on the main Monero chain and the Monero v9 chain.</p>
+<ul>
+<li>Run the following commands to enter the <code>psql</code> shell.
+<pre><code class="language-bash">sudo su postgres
+psql
+</code></pre>
+</li>
+<li>Run the following query.
+<pre><code class="language-sql">CREATE TABLE xmr_xmrv9_keyimages AS (SELECT xmrk.* FROM xmr_keyimages xmrk INNER JOIN xmrv9_keyimages xmrv9k ON xmrk.image=xmrv9k.image);
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="find-output-addresses-3"><a class="header" href="#find-output-addresses-3">Find Output Addresses</a></h1>
+<ol>
+<li>Run the Monero CLI client in offline mode using the following command.
+<pre><code>./monerod --offline
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> This is the Monero client and not the Monero v9 client.</p>
+</blockquote>
+</li>
+<li>Run the <code>find_xmr_xmrv9_addresses.py</code> script that is located in the <code>scripts/hardforks/monero-v9</code> directory.
+<pre><code>python3 find_xmr_xmrv9_addresses.py
+</code></pre>
+This script will query the Monero client and find the one-time addresses (public keys) corresponding to the outputs which appear in the transaction rings of <code>xmr_xmrv9_keyimages</code>. It will write a Python dictionary mapping <code>(ring_amount, index)</code> pairs to the one-time addresses into a file called <code>xmr_xmrv9_addr.dat</code>.</li>
+<li>Once the <code>find_xmr_xmrv9_addresses.py</code> script finishes running, you can stop the <code>monerod</code> client by pressing Ctrl-D in the CLI window.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="find-ring-intersections-3"><a class="header" href="#find-ring-intersections-3">Find Ring Intersections</a></h1>
+<ol>
+<li>
+<p>Run the <code>trim_ring_xmr_xmrv9.py</code> script that is located in the <code>scripts/hardforks/monero-v9</code> directory.</p>
+<pre><code>python3 trim_ring_xmr_xmrv9.py
+</code></pre>
+<p>This script will replace the <code>fork_indices</code> column in <code>xmr_xmrv9_keyimages</code> with the intersection of the transaction rings.</p>
+<blockquote>
+<p><strong>Note</strong>: This script reads the Python dictionary mapping <code>(ring_amount, index)</code> pairs to the one-time addresses from the file called <code>xmr_xmrv9_addr.dat</code>. Ensure that this file is in the same directory as the script.</p>
+</blockquote>
+</li>
+<li>
+<p>You can query the number of transaction rings where the actual output being spent has been identified by running the following query in the <code>psql</code> shell.</p>
+<pre><code class="language-sql">SELECT COUNT(*) FROM xmr_xmrv9_keyimages WHERE ARRAY_LENGTH(fork_indices,1) = 1 AND ARRAY_LENGTH(distinct_ring_indices, 1) &lt;&gt; 1 AND block_height &lt;= 2530000;
+</code></pre>
+<p>The result of this query was 187. Note that the query restricts the block height to 2530000.</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="update-fork-indices-column"><a class="header" href="#update-fork-indices-column">Update Fork Indices Column</a></h1>
+<p>We need to update the <code>fork_indices</code> column in the <code>xmr_keyimages</code> table to contain the intersection of all transaction rings which had the same keyimage. See the discussion in <a href="./create-fork-indices-column.html">Create Fork Indices Column</a> for context.</p>
+<ol>
+<li>Run the <code>find_ring_intersection_from_forks.py</code> script present in the <code>scripts/hardforks</code> directory.
+<pre><code class="language-bash">python3 find_ring_intersection_from_forks.py
+</code></pre>
+</li>
+<li>You can query the number of transaction rings where number of mixins has changed due to the hard fork information by runnng the following query in the <code>psql</code> shell.
+<pre><code class="language-sql">SELECT COUNT(*) FROM xmr_keyimages WHERE ARRAY_LENGTH(distinct_ring_indices, 1) &lt;&gt; ARRAY_LENGTH(fork_indices, 1) AND block_height &lt;= 2530000;
+</code></pre>
+The result of this query was 86338. Note that the query restricts the block height to 2530000.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ringct-analysis"><a class="header" href="#ringct-analysis">RingCT Analysis</a></h1>
+<p>In this chapter, we describe the traceability analysis of RingCT transactions upto block height 2,530,000.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-edges-table-1"><a class="header" href="#create-edges-table-1">Create Edges Table</a></h1>
+<ol>
+<li>Run the following command the <code>psql</code> shell to delete any previously created <code>xmr_bigraph_edges</code> table.
+<pre><code class="language-bash">DROP TABLE xmr_bigraph_edges;
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> We delete the previously created <code>xmr_bigraph_edges</code> to recover disk space. The table occupies about 20 GB. If you have ample disk space available, you can skip the deletion. But remember to create the table in the next step with a name different from <code>xmr_bigraph_edges</code>. For example, you can use <code>xmr_bigraph_edges_hardfork</code>.</p>
+</blockquote>
+</li>
+<li>Create the <code>xmr_bigraph_edges</code> table by running the following query in the <code>psql</code> shell. This query consider transactions upto block height 2530000.
+<pre><code class="language-sql">CREATE TABLE xmr_bigraph_edges AS SELECT xk.id as keyimage_id, xo.id as output_id, xo.amount as output_amount, xo.index as output_index FROM (SELECT id, ring_amount, UNNEST(fork_indices) AS index FROM xmr_keyimages WHERE ring_amount = 0 AND block_height &lt;= 2530000) AS xk INNER JOIN xmr_outputs xo ON xk.ring_amount = xo.amount AND xk.index = xo.index;
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> The only difference between the above query and the RingCT one in the previous <a href="./pg-edges.html">Create Edges Table</a> section is that the <code>ring_indices</code> column is replaced with the <code>fork_indices</code> column. Of course, the block height there was 1541236 to reproduce the results from <a href="https://fc19.ifca.ai/preproceedings/69-preproceedings.pdf">Yu et al's FC 2019 paper</a>.</p>
+</blockquote>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-the-transaction-graph-1"><a class="header" href="#create-the-transaction-graph-1">Create the Transaction Graph</a></h1>
+<ol>
+<li>Run the following query in the <code>psql</code> shell to write the edges file to disk.
+<pre><code class="language-sql">\COPY (SELECT keyimage_id, output_id FROM xmr_bigraph_edges) TO '/tmp/fork-ringct-edges-2530000.txt' WITH DELIMITER ' ';
+</code></pre>
+</li>
+<li>Each row in the <code>fork-ringct-edges-2530000.txt</code> file represents an edge. The <code>keyimage_id</code> and <code>output_id</code> values that represent the edge are index values from the respective PostgreSQL tables. These index values do not form a contiguous range and can have gaps. But the sparse graph representations we will use work better without gaps in the index ranges.
+<ul>
+<li>Copy the <code>fork-ringct-edges-2530000.txt</code> file to the <code>scripts/monero</code> directory.</li>
+<li>Compile the <code>create_csparse_edges.cpp</code> file located in the <code>scripts/monero</code> directory. Run it with the block height as argument.
+<pre><code>cd scripts/monero
+g++ -O2 create_csparse_edges.cpp 
+./a.out 2530000 fork-ringct
+</code></pre>
+The output should look like the following.
+<pre><code>Reading edge file
+Finished reading edge file
+Number of key images: 40351733
+Number of outputs: 45805316
+Number of vertices: 86157049
+Number of edges: 409132035
+Creating keyimage index map
+Finished creating keyimage index map
+Creating output index map
+Finished creating output index map
+Adding edges to graph
+Finished adding edges to graph
+</code></pre>
+</li>
+<li>Three output files are created.
+<ul>
+<li>
+<p><code>fork-ringct-csparse-edges-2530000.txt</code></p>
+<p>The edges in this file are represented as pairs of indices starting from 0 followed by a 1. This is the CSparse format for representing sparse matrices. The 1 corresponds to the value of the matrix entry. In our case, we use this format to represent sparse bipartite graphs.</p>
+</li>
+<li>
+<p><code>fork-ringct-index-keyimageid-map-2530000.txt</code></p>
+<p>This file has pairs of indices and keyimage IDs per line. It is to translate the result of the transaction graph analysis back to the keyimage ID space.</p>
+</li>
+<li>
+<p><code>fork-ringct-index-outputid-map-2530000.txt</code></p>
+<p>This file has pairs of indices and output IDs per line. It is to translate the result of the transaction graph analysis back to the output ID space.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="dm-decomposition-analysis-1"><a class="header" href="#dm-decomposition-analysis-1">DM Decomposition Analysis</a></h1>
+<ol>
+<li>
+<p>Compile the Rust binaries by running <code>cargo build --release</code> (if not already done).</p>
+</li>
+<li>
+<p>Run the Dulmage-Mendelsohn decomposition program as follows.</p>
+<pre><code>cargo run --release --bin dmdec fork-ringct-csparse-edges-2530000.txt fork-ringct-rings-before-dm-2530000.txt fork-ringct-rings-after-dm-2530000.txt fork-ringct-blocksizes-2530000.txt fork-ringct-fine-decomp-2530000.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>dmdec</code> can be understood by running <code>cargo run -r --bin dmdec -- --help</code> or <code> ./target/release/dmdec --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 64.973245831s
+Num keyimages = 40351733, Num public keys = 45805316
+Matched 40351733 out of 45805316 rows (public keys)
+Number of unreachable pubkeys and keyimages = 63120 63120
+Number of blocks in fine decomposition: 63116
+Singletons (traceable keyimages): 63115
+Closed set size histogram: {1: 63115, 5: 1}
+</code></pre>
+<p>The above output says that out of the 40351733 RingCT transaction rings in the data set, 63115 are traceable, i.e. the true output being spent in these transactions can be identified. Furthermore, there is a single closed set of size 5. This closed set corresponds to the five outputs which were deliberately spent using the same size 5 ring in the experiment by <a href="https://eprint.iacr.org/2018/348">Wijaya et al</a>.</p>
+</li>
+<li>
+<p>To calculate statistics related to the DM decomposition analysis, run the following command.</p>
+<pre><code>cargo run --release --bin stats_dm fork-ringct-csparse-edges-2530000.txt fork-ringct-rings-before-dm-2530000.txt fork-ringct-rings-after-dm-2530000.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>stats_dm</code> can be understood by running <code>cargo run -r --bin stats_dm -- --help</code> or <code> ./target/release/stats_dm --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 56.658098576s
+Num keyimages = 40351733, Num public keys = 45805316
+Pre DM decomposition rings file read in 72.727879975s
+Pre DM decomposition mixin histogram:
+[63060, 1214, 1556222, 141805, 2313832, 179183, 1577210, 294913, 55131, 16364, 34152799]
+Post DM decomposition rings file read in 70.455324036s
+Post DM decomposition mixin histogram:
+[63115, 5224, 1556096, 213498, 2251506, 241582, 1515511, 285533, 52644, 62843, 34104181]
+DM decomposition traceable ring mixin histogram:
+[63060, 40, 9, 0, 5, 0, 1, 0, 0, 0, 0]
+</code></pre>
+<p>The above output can be interpreted as follows.</p>
+<ul>
+<li>Out of the 63115 traceable RingCT rings, 63060 had zero mixins (there were already traceable) before the DM decomposition, 40 had one mixin before the DM decomposition, 9 had two mixins, and so on.</li>
+<li>In the above histograms, we combine all mixin counts of 10 or more. So 34152799 corresponds to the number of RingCT transaction rings with 10 or more mixins before the DM decomposition and 34104181 is the same number after the DM decomposition.</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="closed-set-attack-1"><a class="header" href="#closed-set-attack-1">Closed Set Attack</a></h1>
+<ol>
+<li>
+<p>Compile the Rust binaries by running <code>cargo build --release</code> (if not already done).</p>
+</li>
+<li>
+<p>Perform the cascade attack first by running the following command.</p>
+<pre><code>cargo run --release --bin cascade fork-ringct-csparse-edges-2530000.txt fork-ringct-rings-after-cascade-2530000.txt 10
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>cascade</code> can be understood by running <code>cargo run -r --bin cascade -- --help</code> or <code> ./target/release/cascade --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 59.538947568s
+Num keyimages = 40351733, Num public keys = 45805316
+Zero-mixin rings before CA = 63060
+Zero-mixin rings after CA iteration 1 = 63115. Time taken = 232.824592ms.
+Zero-mixin rings after CA iteration 2 = 63115. Time taken = 142.609136ms.
+No change in number of traceable rings. Exiting cascade attack loop
+</code></pre>
+<p>The above output shows that 63115 rings were traced by the cascade attack after the first iteration. As there was no change in the number of traceable rings in the second iteration, the program exited.</p>
+<blockquote>
+<p><strong>Note:</strong> The alert reader would have noticed that the number of rings traced by the cascade attack (63115) is equal to the number of rings traced by the <a href="./hardfork-dm-decomposition.html">DM decomposition</a>. As the DM decomposition achieves the best possible traceability performance, running the clustering algorithm can only hope to identify the closed set of size 5.</p>
+</blockquote>
+</li>
+<li>
+<p>Run the clustering algorithm attack by running the following command.</p>
+<pre><code>cargo run --release --bin cluster fork-ringct-rings-after-cascade-2530000.txt fork-ringct-rings-after-cluster-2530000.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>cluster</code> can be understood by running <code>cargo run -r --bin cluster -- --help</code> or <code> ./target/release/cluster --help</code>.</p>
+</blockquote>
+<p>The clustering algorithm for this data set did not complete even after 24 hours of execution. In contrast, the DM decomposition completed in 4 hours on our test machine.</p>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="non-ringct-analysis"><a class="header" href="#non-ringct-analysis">Non-RingCT Analysis</a></h1>
+<p>In this chapter, we describe the traceability analysis of non-RingCT transaction upto block height 2,530,000.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-edges-table-2"><a class="header" href="#create-edges-table-2">Create Edges Table</a></h1>
+<ol>
+<li>Run the following command the <code>psql</code> shell to delete any previously created <code>xmr_bigraph_edges</code> table.
+<pre><code class="language-bash">DROP TABLE xmr_bigraph_edges;
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> We delete the previously created <code>xmr_bigraph_edges</code> to recover disk space. The table occupies about 20 GB. If you have ample disk space available, you can skip the deletion. But remember to create the table in the next step with a name different from <code>xmr_bigraph_edges</code>. For example, you can use <code>xmr_bigraph_edges_hardfork</code>.</p>
+</blockquote>
+</li>
+<li>Create the <code>xmr_bigraph_edges</code> table by running the following query in the <code>psql</code> shell. This query consider transactions upto block height 2530000.
+<pre><code class="language-sql">CREATE TABLE xmr_bigraph_edges AS SELECT xk.id as keyimage_id, xo.id as output_id, xo.amount as output_amount, xo.index as output_index FROM (SELECT id, ring_amount, UNNEST(fork_indices) AS index FROM xmr_keyimages WHERE ring_amount &lt;&gt; 0 AND block_height &lt;= 2530000) AS xk INNER JOIN xmr_outputs xo ON xk.ring_amount = xo.amount AND xk.index = xo.index;
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> The only difference between the above query and the RingCT one in <a href="./hardfork-ringct-edges.html">Create Edges Table</a> section is that the clause <code>ring_amount = 0</code> is replaced by <code>ring_amount &lt;&gt; 0</code>.</p>
+</blockquote>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="create-the-transaction-graph-2"><a class="header" href="#create-the-transaction-graph-2">Create the Transaction Graph</a></h1>
+<ol>
+<li>Run the following query in the <code>psql</code> shell to write the edges file to disk.
+<pre><code class="language-sql">\COPY (SELECT keyimage_id, output_id FROM xmr_bigraph_edges) TO '/tmp/fork-nonringct-edges-2530000.txt' WITH DELIMITER ' ';
+</code></pre>
+</li>
+<li>Each row in the <code>fork-nonringct-edges-2530000.txt</code> file represents an edge. The <code>keyimage_id</code> and <code>output_id</code> values that represent the edge are index values from the respective PostgreSQL tables. These index values do not form a contiguous range and can have gaps. But the sparse graph representations we will use work better without gaps in the index ranges.
+<ul>
+<li>Copy the <code>fork-nonringct-edges-2530000.txt</code> file to the <code>scripts/monero</code> directory.</li>
+<li>Compile the <code>create_csparse_edges.cpp</code> file located in the <code>scripts/monero</code> directory. Run it with the block height as argument.
+<pre><code>cd scripts/monero
+g++ -O2 create_csparse_edges.cpp 
+./a.out 2530000 fork-nonringct
+</code></pre>
+The output should look like the following.
+<pre><code>Reading edge file
+Finished reading edge file
+Number of key images: 19443292
+Number of outputs: 20800067
+Number of vertices: 40243359
+Number of edges: 44196439
+Creating keyimage index map
+Finished creating keyimage index map
+Creating output index map
+Finished creating output index map
+Adding edges to graph
+Finished adding edges to graph
+</code></pre>
+</li>
+<li>Three output files are created.
+<ul>
+<li>
+<p><code>fork-nonringct-csparse-edges-2530000.txt</code></p>
+<p>The edges in this file are represented as pairs of indices starting from 0 followed by a 1. This is the CSparse format for representing sparse matrices. The 1 corresponds to the value of the matrix entry. In our case, we use this format to represent sparse bipartite graphs.</p>
+</li>
+<li>
+<p><code>fork-nonringct-index-keyimageid-map-2530000.txt</code></p>
+<p>This file has pairs of indices and keyimage IDs per line. It is to translate the result of the transaction graph analysis back to the keyimage ID space.</p>
+</li>
+<li>
+<p><code>fork-nonringct-index-outputid-map-2530000.txt</code></p>
+<p>This file has pairs of indices and output IDs per line. It is to translate the result of the transaction graph analysis back to the output ID space.</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="dm-decomposition-analysis-2"><a class="header" href="#dm-decomposition-analysis-2">DM Decomposition Analysis</a></h1>
+<ol>
+<li>
+<p>Compile the Rust binaries by running <code>cargo build --release</code> (if not already done).</p>
+</li>
+<li>
+<p>Run the Dulmage-Mendelsohn decomposition program as follows.</p>
+<pre><code>cargo run --release --bin dmdec fork-nonringct-csparse-edges-2530000.txt fork-nonringct-rings-before-dm-2530000.txt fork-nonringct-rings-after-dm-2530000.txt fork-nonringct-blocksizes-2530000.txt fork-nonringct-fine-decomp-2530000.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>dmdec</code> can be understood by running <code>cargo run -r --bin dmdec -- --help</code> or <code> ./target/release/dmdec --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 5.675253986s
+Num keyimages = 19443292, Num public keys = 20800067
+Matched 19443292 out of 20800067 rows (public keys)
+Number of unreachable pubkeys and keyimages = 16526396 16526396
+Number of blocks in fine decomposition: 16521000
+Singletons (traceable keyimages): 16517926
+Closed set size histogram: {1: 16517926, 2: 2301, 3: 600, 4: 48, 5: 22, 6: 8, 7: 15, 8: 11, 9: 8, 10: 5, 11: 5, 12: 4, 13: 6, 14: 4, 15: 6, 16: 5, 17: 5, 18: 4, 20: 3, 21: 2, 22: 1, 24: 1, 26: 1, 27: 1, 40: 1, 43: 1, 50: 1, 55: 1, 103: 1, 106: 1, 119: 1, 122: 1}
+</code></pre>
+<p>The above output says that out of the 19443292 non-RingCT transaction rings in the data set, 16517926 are traceable, i.e. the true output being spent in these transactions can be identified. Furthermore, Furthermore, there are 2301 closed sets of size 2, 600 closed sets of size 3, and so on.</p>
+</li>
+<li>
+<p>To calculate statistics related to the DM decomposition analysis, run the following command.</p>
+<pre><code>cargo run --release --bin stats_dm fork-nonringct-csparse-edges-2530000.txt fork-nonringct-rings-before-dm-2530000.txt fork-nonringct-rings-after-dm-2530000.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>stats_dm</code> can be understood by running <code>cargo run -r --bin stats_dm -- --help</code> or <code> ./target/release/stats_dm --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 8.158130482s
+Num keyimages = 19443292, Num public keys = 20800067
+Pre DM decomposition rings file read in 8.336915518s
+Pre DM decomposition mixin histogram:
+[12305154, 707819, 2941534, 1345577, 974689, 143811, 406889, 12399, 9523, 6703, 589194]
+Post DM decomposition rings file read in 5.167356902s
+Post DM decomposition mixin histogram:
+[16517926, 1408040, 836524, 165293, 122570, 33646, 38653, 47624, 73866, 80811, 118339]
+DM decomposition traceable ring mixin histogram:
+[12305154, 628547, 1800799, 965797, 465084, 76061, 219040, 4484, 3706, 2362, 46892]
+</code></pre>
+<p>The above output can be interpreted as follows.</p>
+<ul>
+<li>Out of the 16517926 traceable non-RingCT rings, 12305154 had zero mixins (there were already traceable) before the DM decomposition, 628547 had one mixin before the DM decomposition, 1800799 had two mixins, and so on.</li>
+<li>In the above histograms, we combine all mixin counts of 10 or more. So 589194 corresponds to the number of non-RingCT transaction rings with 10 or more mixins before the DM decomposition and 118339 is the same number after the DM decomposition.</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="closed-set-attack-2"><a class="header" href="#closed-set-attack-2">Closed Set Attack</a></h1>
+<ol>
+<li>
+<p>Compile the Rust binaries by running <code>cargo build --release</code> (if not already done).</p>
+</li>
+<li>
+<p>Perform the cascade attack first by running the following command.</p>
+<pre><code>cargo run --release --bin cascade fork-nonringct-csparse-edges-2530000.txt fork-nonringct-rings-after-cascade-2530000.txt 20
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>cascade</code> can be understood by running <code>cargo run -r --bin cascade -- --help</code> or <code> ./target/release/cascade --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 5.86698341s
+Num keyimages = 19443292, Num public keys = 20800067
+Zero-mixin rings before CA = 12305154
+Zero-mixin rings after CA iteration 1 = 16114012. Time taken = 5.256406281s.
+Zero-mixin rings after CA iteration 2 = 16446848. Time taken = 321.346882ms.
+Zero-mixin rings after CA iteration 3 = 16498286. Time taken = 119.520885ms.
+Zero-mixin rings after CA iteration 4 = 16508535. Time taken = 86.453351ms.
+Zero-mixin rings after CA iteration 5 = 16510655. Time taken = 77.153531ms.
+Zero-mixin rings after CA iteration 6 = 16511170. Time taken = 76.002733ms.
+Zero-mixin rings after CA iteration 7 = 16511327. Time taken = 76.250679ms.
+Zero-mixin rings after CA iteration 8 = 16511347. Time taken = 74.742575ms.
+Zero-mixin rings after CA iteration 9 = 16511360. Time taken = 71.64062ms.
+Zero-mixin rings after CA iteration 10 = 16511362. Time taken = 71.276347ms.
+Zero-mixin rings after CA iteration 11 = 16511362. Time taken = 71.379491ms.
+No change in number of traceable rings. Exiting cascade attack loop
+</code></pre>
+<p>The above output shows that 16511362 rings were traced by the cascade attack after the 10th iteration. As there was no change in the number of traceable rings in the 11th iteration, the program exited.</p>
+</li>
+<li>
+<p>Run the clustering algorithm attack by running the following command.</p>
+<pre><code>cargo run --release --bin cluster fork-nonringct-rings-after-cascade-2530000.txt fork-nonringct-rings-after-cluster-2530000.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>cluster</code> can be understood by running <code>cargo run -r --bin cluster -- --help</code> or <code> ./target/release/cluster --help</code>.</p>
+</blockquote>
+<p>The output should look like the following. The key index values may be different.</p>
+<pre><code>Rings file read in 5.758398987s
+Ring sets created in 1.864197658s
+Counted initial number of traceable rings in 83.199978ms
+Number of traceable rings = 16511362
+At beginning of clustering algorithm while loop
+1: Cluster of size 506 found at key index 21441. Search iteration = 1
+Number of blocks in fine decomposition: 500
+Singletons (traceable keyimages): 499
+2: Cluster of size 641 found at key index 21450. Search iteration = 1
+Number of blocks in fine decomposition: 628
+Singletons (traceable keyimages): 627
+3: Cluster of size 614 found at key index 23092. Search iteration = 1
+Number of blocks in fine decomposition: 597
+Singletons (traceable keyimages): 596
+4: Cluster of size 352 found at key index 33335. Search iteration = 1
+Number of blocks in fine decomposition: 346
+Singletons (traceable keyimages): 345
+.
+.
+.
+3040: Cluster of size 8 found at key index 18822746. Search iteration = 2
+Number of blocks in fine decomposition: 1
+Singletons (traceable keyimages): 0
+3041: Cluster of size 16 found at key index 18835335. Search iteration = 2
+Number of blocks in fine decomposition: 1
+Singletons (traceable keyimages): 0
+3042: Cluster of size 13 found at key index 19272919. Search iteration = 2
+Number of blocks in fine decomposition: 1
+Singletons (traceable keyimages): 0
+3043: Cluster of size 2 found at key index 19306398. Search iteration = 2
+Number of blocks in fine decomposition: 1
+Singletons (traceable keyimages): 0
+Number of traceable rings = 16517613
+Number of closed sets = 9296
+Number of singleton closed sets = 6251
+Number of non-singleton closed sets = 3045
+Closed set size histogram: {2: 2299, 3: 600, 4: 47, 5: 22, 6: 8, 7: 15, 8: 11, 9: 7, 10: 5, 11: 4, 12: 4, 13: 4, 14: 2, 15: 2, 16: 3, 17: 3, 18: 2, 20: 1, 21: 1, 43: 1, 50: 1, 55: 1}
+Number of public keys in all sets = 13876
+Number of public keys in non-singleton closed sets = 7625
+Pre attack mixin histogram:
+[16511362, 1411442, 839076, 165559, 122742, 33713, 38693, 47630, 73900, 80811, 118364]
+Post attack mixin histogram:
+[16517613, 1408036, 836806, 165300, 122598, 33646, 38653, 47624, 73866, 80811, 118339]
+
+</code></pre>
+<p>The above output can be interpreted as follows.</p>
+<ul>
+<li>The clustering algorithm renders 6251 transaction rings traceable. The number of traceable rings increases from 16511362 (after the cascade attack) to 16517613. In comparison, the DM decomposition had rendered 16517926 rings traceable, i.e. 313 rings more than the clustering algorithm.</li>
+<li>There are 2299 closed sets of size 2, 600 closed sets of size 3, and so on. Note that the maximum size of a closed set found by the clustering algorithm is 55. In contrast, the largest closed set found by the DM decomposition is 122.</li>
+</ul>
+</li>
+<li>
+<p>To calculate statistics related to the clustering algorithm, run the following command.</p>
+<pre><code>cargo run --release --bin stats_cla fork-nonringct-csparse-edges-2530000.txt fork-nonringct-rings-after-cascade-2530000.txt fork-nonringct-rings-after-cluster-2530000.txt
+</code></pre>
+<blockquote>
+<p><strong>Note</strong>: The significance of the arguments to <code>stats_cla</code> can be understood by running <code>cargo run -r --bin stats_cla -- --help</code> or <code> ./target/release/stats_cla --help</code>.</p>
+</blockquote>
+<p>The output should look like the following.</p>
+<pre><code>Edge file read in 6.417090529s
+Num keyimages = 19443292, Num public keys = 20800067
+Initial mixin histogram:
+[12305154, 707819, 2941534, 1345577, 974689, 143811, 406889, 12399, 9523, 6703, 589194]
+Post cascade attack rings file read in 5.539708542s
+Post cascade attack mixin histogram:
+[16511362, 1411442, 839076, 165559, 122742, 33713, 38693, 47630, 73900, 80811, 118364]
+Cascade traceable ring pre-attack mixin histogram:
+[12305154, 628161, 1797422, 964843, 464238, 75845, 218722, 4469, 3690, 2344, 46474]
+Pre-attack mixin histogram of rings traced by cascade attack
+0 12305154
+1 628161
+2 1797422
+3 964843
+4 464238
+5 75845
+6 218722
+7 4469
+8 3690
+9 2344
+10 46474
+Total number of rings traced by cascade attack = 16511362
+Post clustering algorithm rings file read in 7.221059516s
+Post clustering algorithm mixin histogram:
+[16517613, 1408036, 836806, 165300, 122598, 33646, 38653, 47624, 73866, 80811, 118339]
+Cluster traceable ring post-attack mixin histogram:
+[12305154, 628547, 1800515, 965790, 465062, 76061, 219040, 4484, 3706, 2362, 46892]
+Post-attack mixin histogram of rings traced by clustering algorithm
+0 0
+1 386
+2 3093
+3 947
+4 824
+5 216
+6 318
+7 15
+8 16
+9 18
+10 418
+Total number of rings traced by clustering algorithm = 6251
+</code></pre>
+<p>The above output can be interpreted as follows.</p>
+<ul>
+<li>Out of the 16511362 rings traced by the cascade attack, 12305154 had zero mixins (there were already traceable) before the attack, 628161 had one mixin before the attack, 1797422 had two mixins, and so on.</li>
+<li>Out of the 6251 rings traced by the clustering algorithm, 386 had one mixin after the cascade attack and before the clustering algorithm was executed, 3093 had two mixins, and so on.</li>
+<li>In the above histograms, we combine all mixin counts of 10 or more.
+<ul>
+<li>So 589194 corresponds to the number of transaction rings with 10 or more mixins before the cascade attack, 118364 is the same number after the cascade attack, and 118339 is the number of rings which had 10 or more mixins after the clustering algorithm was executed.</li>
+<li>Similarly, 46474 is the number of rings traced by the cascade attack that had 10 or more mixins before the attack. And 418 is the number of rings traced by the clustering algorithm that had 10 or more mixins before the algorithm was executed.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </body>
+</html>

@@ -1,0 +1,4 @@
+/* Wraparound in markdown code blocks https://stackoverflow.com/a/56469907 */
+code {
+    white-space : pre-wrap !important;
+}
