@@ -262,11 +262,6 @@
   </url>
   
   <url>
-    <loc>https://www.respectedsir.com/cv/</loc>
-    <lastmod>2025-03-24</lastmod>
-  </url>
-  
-  <url>
     <loc>https://www.respectedsir.com/ethlab/404/</loc>
     <lastmod>2025-03-24</lastmod>
   </url>
@@ -402,7 +397,12 @@
   </url>
   
   <url>
+    <loc>https://www.respectedsir.com/cv/</loc>
+    <lastmod>2025-04-07</lastmod>
+  </url>
+  
+  <url>
     <loc>https://www.respectedsir.com/cv/index_files/libs/revealjs/plugin/notes/speaker-view/</loc>
-    <lastmod>2025-03-25</lastmod>
+    <lastmod>2025-04-07</lastmod>
   </url>
 </urlset>
